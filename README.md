@@ -1,3 +1,5 @@
 # Curriculum Vitae
 
-**My CV**
+## Instructions
+
+To generate the Curriculum Vitae PDF run `wkhtmltopdf index.html cv`.
