@@ -41,11 +41,11 @@ vector space, with a certain length, we could compute the cosine similarity betw
 - As previously said, cosine similarity measures the similarity between two vectors. It does so, by computing the cosine of the angle between the two vectors, which means that
 higher angles between two vectors representing two items will have a lower cosine value, than lower angles.
 
-![Cosine Function]({{ site.url }}/assets/img/posts/word2vec/cosine_function.png)
+![Cosine Function](/assets/img/posts/word2vec/cosine_function.png)
 
 - The calculation is done by dividing the **dot product** of the two vectors by the multiplication of their **euclidean norms**.
 
-![Cosine Function]({{ site.url }}/assets/img/posts/word2vec/cosine_similarity.png)
+![Cosine Function](/assets/img/posts/word2vec/cosine_similarity.png)
 
 - In the snippet below we're using sklearn.metrics.pairwise module which contains the cosine similarity function to calculate the cosine similarity between the
 two previously created vectors.

@@ -13,12 +13,12 @@ permalink: /academics/
 I have a **MSc** in this course.
 I finished the course with a **GPA of 15** (0-20) and in my MSc's thesis, I made a **Software Library for Stream-Based Recommender Systems**, called [increc](https://pypi.org/project/increc/) whose implementation and report document were graded with a **19** mark.
 
-![FEUP]({{site.url}}/assets/img/academics/feup.png)
+![FEUP](/assets/img/academics/feup.png)
 
 - **Erasmus** (2019):  In my 5th year of college I decided to take part in the **Erasmus** student exchange program.
 **Technical University of Ostrava**, Czech Republic was the University of my choice. There, I took courses such as **Methods of Analysis of Data**, **Methods of Analysis of Textual Data**, **Parallel Computing**, **Biologically Inspired Algorithms** and **Digital Image Processing**.
 
-  ![VSB]({{site.url}}/assets/img/academics/vsb.png)
+  ![VSB](/assets/img/academics/vsb.png)
 
 #### Other certifications
 
