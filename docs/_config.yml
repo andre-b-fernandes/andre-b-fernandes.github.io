@@ -21,7 +21,7 @@
 title: André Fernandes
 email: fernandoandre49@gmail.com
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "Marko50.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "marko50.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 linkedin_username: af-fernandes
 github_username:  Marko50
 profile_path: assets/img/profile.jpg
