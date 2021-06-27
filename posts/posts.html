@@ -1,0 +1,24 @@
+---
+layout: home
+title: Posts
+permalink: /posts/
+---
+
+
+<div class="row">
+  {% for post in site.posts %}
+    <div class="col-sm-4 mt-3">
+      <div class="card zoom">
+        <a href="{{ post.url }}" target="_blank">
+          {{ post.title }}
+          <img class="mt-1 card-img-top" src="{{ site.url }}/assets/img/posts/{{ post.image }}">
+        </a>
+        <p class="ml-1 card-text">
+          {% for cat in post.categories %}
+            <small class="text-muted"> #{{ cat }} </small>
+          {% endfor %}
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+</div>
