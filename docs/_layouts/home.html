@@ -1,0 +1,18 @@
+---
+layout: default
+---
+
+<div class="home">
+  <div class="row">
+    <div class="col-lg-3 justify-content-center align-middle">
+      {% include navbar.html %}
+    </div>
+
+    <div class="col-lg">
+      {%- if page.title -%}
+        <h1 class="page-heading mb-4">{{ page.title }}</h1>
+      {%- endif -%}
+      {{ content }}
+    </div>
+  </div>
+</div>
