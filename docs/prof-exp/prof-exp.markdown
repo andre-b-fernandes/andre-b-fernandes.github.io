@@ -22,4 +22,4 @@ This project's architecture is much different than the usual applications I've d
 it has to interconnect with the main project which has been a challenge but very fun to do. The models are trained and served using **AWS Sagemaker**. It includes a deploy CI/CD pipeline which deploys the project when in the master branch using **Gitlab** pipelines.
 I used **Python** and some of its libraries such as **Numpy**, **Tensorflow**, and **Pandas**. I also want to note that a component of this project is an on-demand machine learning model which can be asked for predictions in a **Flask** server.
 
-![Jumpseller]({{site.url}}/assets/img/prof-exp/jumpseller.jpg)
+![Jumpseller](/assets/img/prof-exp/jumpseller.jpg)

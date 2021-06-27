@@ -12,4 +12,4 @@ image: udemy-ml-ds-dl-python.png
 - The course's final project was writing code to run some algorithms on a mammographic masses dataset for classification purposes, that is to detect breast cancer, which was a simple way of implementing some of the things I learned in the course. The code is hosted [here](https://github.com/Marko50/udemy-machine-learning-data-science-deep-learning-python).
 
 
-![Certificate]({{site.url}}/assets/img/posts/udemy-ml-ds-dl-python/certificate.png)
+![Certificate](/assets/img/posts/udemy-ml-ds-dl-python/certificate.png)
