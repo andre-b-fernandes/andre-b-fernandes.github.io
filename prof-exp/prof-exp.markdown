@@ -13,7 +13,7 @@ permalink: /prof-exp/
 
 - This is the moment I turned myself into a Machine Learning Engineer, and because it was a small company, in terms of the number of employees, I also made a lot of work in **Data Engineering**.
 Initially, I was responsible for building a large-scale **Big Data** collection pipeline using AWS services, namely **AWS Kinesis Firehose** for stream-data collection which is stored in **AWS S3**, processed and aggregated using **AWS Glue**, and queried using **AWS Athena**.
-I've also helped implement a more robust search mechanism for the main project **ElasticSearch**.
+I've also helped implement a more robust search mechanism for the main project using **ElasticSearch**.
 
 - Currently, I'm working on a large-scale online machine learning project related to recommendations.
 I've worked with content-based recommendations using an NLP deep learning neural network architecture called Word2Vec, and also collaborative filtering using item-based recommendations
