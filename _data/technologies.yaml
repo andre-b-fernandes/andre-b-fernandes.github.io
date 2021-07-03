@@ -34,6 +34,8 @@ libraries:
     label: Tensorflow
   - path: assets/img/numpy.png
     label: Numpy
+  - path: assets/img/matplotlib.png
+    label: Matplotlib
   - path: assets/img/flask.png
     label: Flask
   - path: assets/img/rails.png

@@ -2,3 +2,14 @@
 <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
 <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
 <link rel="stylesheet" href="/assets/css/main.css">
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      {%- if page.title -%}
+        <h1 class="page-heading mb-4">{{ page.title }}</h1>
+      {%- endif -%}
+      {{ content }}
+    </div>
+  </div>
+</div>

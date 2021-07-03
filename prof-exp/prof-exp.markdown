@@ -16,8 +16,8 @@ Initially, I was responsible for building a large-scale **Big Data** collection 
 I've also helped implement a more robust search mechanism for the main project using **ElasticSearch**.
 
 - Currently, I'm working on a large-scale online machine learning project related to recommendations.
-I've worked with content-based recommendations using an NLP deep learning neural network architecture called Word2Vec, and also collaborative filtering using item-based recommendations
-with cosine similarity and a session-based recommender system. We also use **ElasticSearch** for this task.
+I've worked with content-based recommendations using an NLP deep learning neural network architecture called **Word2Vec**, and also collaborative filtering using item-based recommendations
+with cosine similarity and a session-based recommender system (**GRU4REC** neural network). We also use **ElasticSearch** for this task.
 This project's architecture is much different than the usual applications I've done so far since it's done mostly via separated **Docker** images stored using **AWS ECR**, and because
 it has to interconnect with the main project which has been a challenge but very fun to do. The models are trained and served using **AWS Sagemaker**. It includes a deploy CI/CD pipeline which deploys the project when in the master branch using **Gitlab** pipelines.
 I used **Python** and some of its libraries such as **Numpy**, **Tensorflow**, and **Pandas**. I also want to note that a component of this project is an on-demand machine learning model which can be asked for predictions in a **Flask** server.

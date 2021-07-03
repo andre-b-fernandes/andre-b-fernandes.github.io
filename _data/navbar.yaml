@@ -17,3 +17,6 @@ contents:
   - title: Posts
     href: /posts
     id: posts
+  - title: Resume
+    href: /resume
+    id: resume

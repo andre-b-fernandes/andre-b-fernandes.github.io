@@ -1,0 +1,141 @@
+---
+layout: resume
+title: André Fernandes | Machine Learning Engineer
+permalink: /resume/
+---
+
+<div class="bg-light border row">
+  <div class="col-12 mb-3 bg-secondary text-white">
+    <h4 class="mt-2">
+      Basic Information
+    </h4>
+  </div>
+  <div class="col-12">
+    <div class="row">
+      {% for info in site.data.resume.personal-information %}
+        <div class="col-6">
+          <div class="row">
+            <div class="col-lg-3">
+              <b>{{info.label}}</b>
+            </div>
+            <div class="col">
+               {{info.value}} <i class="{{info.icon}}" role="img"></i>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
+    <h4 class="mt-2">
+      Academics and Experience
+    </h4>
+  </div>
+  <div class="col-12">
+    <div class="row">
+      <div class="col-6">
+        {% for info in site.data.resume.academics %}
+          <div class="row">
+            <div class="col-lg-2">
+              <b> {{info.range }} </b>
+            </div>
+            <div class="col">
+              <p> {{info.label}}</p>
+              <p> {{info.value}} <i class="{{info.icon}}" role="img"></i></p>
+              <p> {{info.description}} </p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="col-6">
+        {% for info in site.data.resume.prof-exp %}
+          <div class="row">
+            <div class="col-lg-2">
+              <b> {{info.range }} </b>
+            </div>
+            <div class="col">
+              <p> {{info.label}} <i class="{{info.icon}}" role="img"></i> </p>
+              <p> {{info.value}}</p>
+              <p> {{info.description}}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
+    <h4 class="mt-2">
+      Skills
+    </h4>
+  </div>
+  <div class="col-12">
+    <div class="row">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-lg-2">
+            <b> Tech </b>
+          </div>
+          <div class="col">
+            <ul>
+              {% for info in site.data.resume.tech-skills %}
+              <li> {{ info }} </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="row">
+          <div class="col-lg-2">
+            <b> Social </b>
+          </div>
+          <div class="col">
+            <ul>
+              {% for info in site.data.resume.social-skills %}
+              <li> {{ info }} </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
+    <h4 class="mt-2">
+      Interests
+    </h4>
+  </div>
+  <div class="col-12">
+    <div class="row">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-2">
+            <b> Extra </b>
+          </div>
+          <div class="col">
+            <ul>
+              {% for info in site.data.resume.extra-curricular %}
+                <li> {{ info }} </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="row">
+          <div class="col-2">
+            <b> Other </b>
+          </div>
+          <div class="col">
+            <ul>
+              {% for info in site.data.resume.interests %}
+                <li> {{ info }} </li>
+              {% endfor %}
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

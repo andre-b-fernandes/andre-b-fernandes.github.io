@@ -1,0 +1,69 @@
+personal-information:
+  - label: Name
+    value: Fernando André Fernandes
+    icon: bi-person-circle
+  - label: Website
+    value: <a href="https://marko50.github.io"> https://marko50.github.io </a>
+    icon: bi-globe
+  - label: Nationality
+    value: Portuguese
+    icon: bi-house
+  - label: Email
+    value: fernandoandre49@gmail.com
+    icon: bi-envelope-fill
+  - label: Github
+    value: <a href="https://github.com/Marko50"> https://github.com/Marko50 </a>
+    icon: bi-github
+  - label: Linkedin
+    value: <a href="https://www.linkedin.com/in/af-fernandes/"> https://www.linkedin.com/in/af-fernandes </a>
+    icon: bi-linkedin
+academics:
+  - label: Faculty of Engineering of the University of Porto
+    value: MSc in Informatics and Computer Engineering
+    range: 2015-2020
+    icon: bi-laptop
+    description: An integrated masters' degree in computer engineering with a final GPA of 15 and a 19 mark on my dissertation (0-20 scale).
+  - label: VSB - Technical University of Ostrava
+    value: ERASMUS
+    range: 2019
+    icon: bi-emoji-smile
+    description: I took part in the ERASMUS exchange student program in 2019 and went abroad to study at VSB-TUO, which was a very enriching experience.
+prof-exp:
+  - label: Jumpseller
+    value: Machine Learning Engineer
+    range: 2018-2021
+    icon: bi-bag
+    description: Initially worked in software web development and then fully converted to a machine learning engineer working on product recommendations and also performing some data engineering tasks.
+tech-skills:
+  - Python
+  - Ruby (Rails)
+  - Javascript
+  - Tensorflow
+  - Numpy
+  - Matplotlib
+  - Pandas
+  - Git
+  - Docker
+  - AWS Cloud Services
+  - Gitlab CI
+social-skills:
+  - Public Speaking
+  - Helping others
+  - Teamwork
+  - Fast Learner
+extra-curricular:
+  - AlumniEI FEUP
+  - Google Hash Code(2016/2019/2020)
+  - Make It or Break It 2018
+  - Porto Circular 101
+  - RUTIS Volunteer Professor
+  - Banco Alimentar contra a Fome
+  - JobIT
+interests:
+  - General Tech
+  - AI
+  - Machine Learning
+  - Deep Learning
+  - Economics
+  - Politics
+  - Football

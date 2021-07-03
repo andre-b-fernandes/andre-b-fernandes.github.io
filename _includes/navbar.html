@@ -8,11 +8,12 @@
     <p class="card-text"> {{ site.data.navbar.description }}</p>
     <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
       {% for content in site.data.navbar.contents %}
-        <a id="{{ content.id }}" class="nav-link mb-2 border border-info text-center" href="{{ content.href }}" role="tab"> {{ content.title }} </a>
+      <a id="{{ content.id }}" class="nav-link mb-2 border border-info text-center" href="{{ content.href }}" role="tab"> {{ content.title }} </a>
       {% endfor %}
     </div>
   </div>
 </div>
+
 
 <script>
   $('#navBarTab a').on('click', function (e) {
