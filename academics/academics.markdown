@@ -6,12 +6,12 @@ permalink: /academics/
 
 
 #### Primary, Basic and Secondary Education (2003-2015)
-- Escola da Avenida and Externato Delfim Ferreira was where I did my basic and high school education and picked the *Sciences and Technologies* course. These schools are located in a village called **Riba D'Ave**, in the north of **Portugal**.
+- Escola da Avenida and Externato Delfim Ferreira was where I did my basic and high school education and picked *Sciences and Technologies*. These schools are located in a village called **Riba D'Ave**, in the north of **Portugal**.
 
 #### University (2015-2020)
 - I applied and got accepted to the **Informatics and Computer Engineering course** at the **Faculty of Engineering University of Porto** which was my 1st choice.
-I have a **MSc** in this course.
-I finished the course with a **GPA of 15** (0-20) and in my MSc's thesis, I made a **Software Library for Stream-Based Recommender Systems**, called [increc](https://pypi.org/project/increc/) whose implementation and report document were graded with a **19** mark.
+I have a **MSc** in this degree.
+I finished with a **GPA of 15** (0-20) and in my MSc's thesis, I made a **Software Library for Stream-Based Recommender Systems**, called [increc](https://pypi.org/project/increc/) whose implementation and report document were graded with a **19** mark.
 
 ![FEUP](/assets/img/academics/feup.png)
 

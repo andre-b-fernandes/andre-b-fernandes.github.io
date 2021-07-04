@@ -7,7 +7,7 @@ permalink: /prof-exp/
 
 #### (2018 - 2020) Jumpseller - Part-time (Student-worker).
 
-- **Jumpseller** is an **e-commerce provider** where you can easily set up your online store. During this period, I made part of their **software development team**. While working there I coded in **Ruby**, using the known framework **Ruby on Rails** as well as in **ReactJS** for **frontend** development. Besides this, I also worked with **job queues** using **Sidekiq**, **webhooks** for service connection, and with caching mechanisms using **Redis**. In terms of databases, I worked with both **MySQL** and **PostgreSQL** databases. Overall I gained many insights on the development and maintenance of a highly used web application as well as the software development process using **SCRUM**. It was my first job on the field, working part-time and managing my time as a student-worker.
+- [**Jumpseller**](https://jumpseller.com/) is an **e-commerce provider** where you can easily set up your online store. During this period, I made part of their **software development team**. While working there I coded in **Ruby**, using the known framework **Ruby on Rails** as well as in **ReactJS** for **frontend** development. Besides this, I also worked with **job queues** using **Sidekiq**, **webhooks** for service connection, and with caching mechanisms using **Redis**. In terms of databases, I worked with both **MySQL** and **PostgreSQL** databases. Overall I gained many insights on the development and maintenance of a highly used web application as well as the software development process using **SCRUM**. It was my first job on the field, working part-time and managing my time as a student-worker.
 
 #### (2020 - Today) Jumpseller - Full-time.
 

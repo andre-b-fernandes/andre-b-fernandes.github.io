@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>GRU4REC recommender system | André Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="GRU4REC recommender system" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="What is GRU4REC ?" />
+<meta property="og:description" content="What is GRU4REC ?" />
+<link rel="canonical" href="https://marko50.github.io/gru4rec/" />
+<meta property="og:url" content="https://marko50.github.io/gru4rec/" />
+<meta property="og:site_name" content="André Fernandes" />
+<meta property="og:image" content="https://marko50.github.io/gru4rec.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-26T00:00:00+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://marko50.github.io/gru4rec.png" />
+<meta property="twitter:title" content="GRU4REC recommender system" />
+<script type="application/ld+json">
+{"url":"https://marko50.github.io/gru4rec/","description":"What is GRU4REC ?","@type":"BlogPosting","image":"https://marko50.github.io/gru4rec.png","headline":"GRU4REC recommender system","dateModified":"2021-06-26T00:00:00+01:00","datePublished":"2021-06-26T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://marko50.github.io/gru4rec/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://marko50.github.io/feed.xml" title="André Fernandes" /></head>
+<body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+<script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+<script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="home">
+  <div class="row">
+    <div class="col-lg-2 justify-content-center align-middle">
+      <div class="card">
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="" style="width:50%; border-radius: 50%; transform: translateX(50%);">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title"> André Fernandes</h5>
+    <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
+    <p class="card-text"> FEUP, UPORTO, Portugal</p>
+    <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+      
+      <a id="about" class="nav-link mb-2 border border-info text-center" href="/about" role="tab"> About me </a>
+      
+      <a id="academics" class="nav-link mb-2 border border-info text-center" href="/academics" role="tab"> Academics </a>
+      
+      <a id="prof-exp" class="nav-link mb-2 border border-info text-center" href="/prof-exp" role="tab"> Professional Experience </a>
+      
+      <a id="technologies" class="nav-link mb-2 border border-info text-center" href="/technologies" role="tab"> Technologies </a>
+      
+      <a id="posts" class="nav-link mb-2 border border-info text-center" href="/posts" role="tab"> Posts </a>
+      
+      <a id="resume" class="nav-link mb-2 border border-info text-center" href="/resume" role="tab"> Resume </a>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $('#navBarTab a').on('click', function (e) {
+    $(this).tab('show')
+  })
+
+  let path = window.location.pathname.replace(/\//g, '');
+  if(path && $("#" + path).length > 0) {
+    $("#" + path).addClass('active');
+  }
+</script>
+
+    </div>
+
+    <div class="col-lg-10"><h1 class="page-heading mt-3 mb-4">GRU4REC recommender system</h1><p><strong>What is GRU4REC ?</strong></p>
+
+<ul>
+  <li><strong>GRU4REC</strong> is a <strong>recurrent neural network</strong> architecture that uses <strong>gated recurrent units (GRU)</strong> and is aimed for acting as a <strong>session-based recommender system</strong>.
+It caught my eye since there are cases in the industry where a user cannot be identified via an ID (it might not be registered) so the only
+feasible way to identify such a user is using a session. It is also one of the few applications of RNN’s to the recommendation
+field. You can find the paper <a href="https://arxiv.org/pdf/1511.06939.pdf">here</a>.</li>
+</ul>
+
+<p><strong>How does it work?</strong></p>
+
+<ul>
+  <li>One of the usages of RNN’s is to model data that comes in a <strong>sequence</strong> with some length. An example is to attempt to suggest the next word of a given context phrase in a book, by analyzing and processing all the phrases of the books of the same author. The sequence often implies a <strong>temporal</strong> series of events. RNN’s differ from standard <strong>feed-forward</strong> neural networks since they maintain a <em>hidden state</em>, which can be interpreted as a <em>memory</em> of previous inputs. This <em>hidden state</em> acts as a loop which unfolds the hidden layer N times, where N is the length of the sequence we’re analyzing. This way, we calculate the output of the network by using the input at each step, and the <em>hidden state</em> at that same step which is learned by all the other previous steps.</li>
+  <li>Since RNN’s are trained using <strong>back-propagation</strong> they suffer from the <strong>Vanishing Gradient</strong> issue, This issue is related to the fact that, the weights of the network are updated using the <strong>gradient</strong> of the computed loss, and that gradient shrinks as the <strong>error propagates</strong> through the network at each <strong>time step</strong>, meaning that with lower
+gradient values, there will be smaller weight updates and the RNN won’t learn the <strong>long-range dependencies</strong> across time steps.</li>
+</ul>
+
+<p><img src="/assets/img/posts/gru4rec/rnn.png" alt="rnn" /></p>
+
+<ul>
+  <li>Gated Recurrent Units help RNN’s to mitigate the previous issue. They do so by applying different ways of calculating the hidden state, by deciding when to calculate it and how to update it. They implement a reset gate(<code class="language-plaintext highlighter-rouge">r(t)</code>), an update gate(<code class="language-plaintext highlighter-rouge">z(t)</code>) and a new memory container(<code class="language-plaintext highlighter-rouge">h'(t)</code>).</li>
+</ul>
+
+<p><img src="/assets/img/posts/gru4rec/gru.png" alt="gru" /></p>
+
+<p><strong>How can we implement this?</strong></p>
+
+<ul>
+  <li>
+    <p>If we consider a session (user) that visits (or purchases) a series of products  at a specific timestamp, what we have is a sequence of product IDS in a session
+which fits our use case.</p>
+  </li>
+  <li>
+    <p>To simplify things we can look at the following Tensorflow <a href="https://www.tensorflow.org/text/tutorials/text_generation">link</a> and apply it to our
+use-case.</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">GRU</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.losses</span> <span class="kn">import</span> <span class="n">SparseCategoricalCrossentropy</span>
+
+<span class="k">class</span> <span class="nc">GRU4Rec</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">,</span> <span class="n">rnn_units</span><span class="p">,</span> <span class="n">dropout</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">vec_size</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">gru</span> <span class="o">=</span> <span class="n">GRU</span><span class="p">(</span><span class="n">rnn_units</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>  <span class="n">return_state</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dense</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="n">vec_size</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">'softmax'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">return_state</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">states</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">gru</span><span class="p">.</span><span class="n">get_initial_state</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">gru</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dense</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_state</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">states</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">GRU4Rec</span><span class="p">(</span>
+    <span class="n">vocab_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">n_items</span><span class="p">),</span>
+    <span class="n">embedding_dim</span><span class="o">=</span><span class="n">embedding_dim</span><span class="p">,</span>
+    <span class="n">rnn_units</span><span class="o">=</span><span class="n">rnn_units</span>
+<span class="p">)</span>
+
+<span class="n">loss</span> <span class="o">=</span> <span class="n">SparseCategoricalCrossentropy</span><span class="p">(</span><span class="n">from_logits</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">'accuracy'</span><span class="p">])</span>
+<span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>How can we deploy such a model?</strong></p>
+
+<ul>
+  <li>I’ve tackled this problem and one efficient service I’ve used was AWS Sagemaker since it provides a cloud framework to train and deploy deep learning
+models. One thing you need to notice is that, if this is going to be served online, it needs to respond to HTTP requests.
+To simplify this I’ve used <strong>Flask</strong> as a server and used <strong>Gunicorn</strong> and <strong>Nginx</strong> on top of it. You need to use build a <strong>Docker image</strong> where you’ll provided your Flask server so that AWS Sagemaker can pull that image and serve your model endpoint.. You can store your images using <strong>AWS Elastic Container Registry</strong>.</li>
+</ul>
+
+<p><img src="/assets/img/posts/gru4rec/sagemaker_gru4rec.png" alt="gru" /></p>
+
+    </div>
+  </div>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
+      <div class="col-lg-3"><a href="https://github.com/Marko50"> <i class="bi-github" role="img"></i> <span>Marko50</span></a></div>
+      <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
+    <div>
+  </div>
+</footer>
+</body>
+
+</html>
