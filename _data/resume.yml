@@ -59,6 +59,9 @@ extra-curricular:
   - RUTIS Volunteer Professor
   - Banco Alimentar contra a Fome
   - JobIT
+extra-certifications:
+  - label: Machine Learning, Data Science and Deep Learning with Python on Udemy by Frank Kane
+    range: 2021
 interests:
   - General Tech
   - AI

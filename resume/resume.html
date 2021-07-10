@@ -47,6 +47,16 @@ permalink: /resume/
             </div>
           </div>
         {% endfor %}
+        {% for info in site.data.resume.extra-certifications %}
+          <div class="row">
+            <div class="col-lg-2">
+              <b> {{info.range }} </b>
+            </div>
+            <div class="col">
+              <p> {{info.label}}</p>
+            </div>
+          </div>
+        {% endfor %}
       </div>
 
       <div class="col-6">
