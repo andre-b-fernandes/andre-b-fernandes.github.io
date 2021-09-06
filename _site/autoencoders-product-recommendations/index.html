@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Autoencoders for product recommendations | André Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Autoencoders for product recommendations" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images." />
+<meta property="og:description" content="In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images." />
+<link rel="canonical" href="http://localhost:4000/autoencoders-product-recommendations/" />
+<meta property="og:url" content="http://localhost:4000/autoencoders-product-recommendations/" />
+<meta property="og:site_name" content="André Fernandes" />
+<meta property="og:image" content="http://localhost:4000/vae-product-recommendations.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-26T00:00:00+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/vae-product-recommendations.png" />
+<meta property="twitter:title" content="Autoencoders for product recommendations" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Autoencoders for product recommendations","dateModified":"2021-06-26T00:00:00+01:00","datePublished":"2021-06-26T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/autoencoders-product-recommendations/"},"url":"http://localhost:4000/autoencoders-product-recommendations/","description":"In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.","image":"http://localhost:4000/vae-product-recommendations.png","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="André Fernandes" /></head>
+<body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+<script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+<script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="home">
+  <div class="row">
+    <div class="col-lg-2 justify-content-center align-middle">
+      <div class="card">
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="" style="width:50%; border-radius: 50%; transform: translateX(50%);">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title"> André Fernandes</h5>
+    <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
+    <p class="card-text"> FEUP, UPORTO, Portugal</p>
+    <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+      
+      <a id="about" class="nav-link mb-2 border border-info text-center" href="/about" role="tab"> About me </a>
+      
+      <a id="academics" class="nav-link mb-2 border border-info text-center" href="/academics" role="tab"> Academics </a>
+      
+      <a id="prof-exp" class="nav-link mb-2 border border-info text-center" href="/prof-exp" role="tab"> Professional Experience </a>
+      
+      <a id="technologies" class="nav-link mb-2 border border-info text-center" href="/technologies" role="tab"> Technologies </a>
+      
+      <a id="posts" class="nav-link mb-2 border border-info text-center" href="/posts" role="tab"> Posts </a>
+      
+      <a id="resume" class="nav-link mb-2 border border-info text-center" href="/resume" role="tab"> Resume </a>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $('#navBarTab a').on('click', function (e) {
+    $(this).tab('show')
+  })
+
+  let path = window.location.pathname.replace(/\//g, '');
+  if(path && $("#" + path).length > 0) {
+    $("#" + path).addClass('active');
+  }
+</script>
+
+    </div>
+
+    <div class="col-lg-10"><h1 class="page-heading mt-3 mb-4">Autoencoders for product recommendations</h1><p>In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.</p>
+
+<p><strong>What are autoencoders?</strong></p>
+
+<p>Autoencoders are a type of neural network which attempts to compress long-range multidimensional into a low dimensional space and then decompress it into the original dimension number trying to minimize the error between the decompressed image and the original one.</p>
+
+<p><strong>How can they be used for product recommendations?</strong></p>
+
+<p>Most products have associated images for people to see while buying online.
+Images are represented as arrays of pixel values where all the pixels have the same dimension which depends on the image representation.
+For instance, if we have a colored image of 3 RGB channels with 150px width and 150px height, representing it as a <em>NumPy</em> array would result in a shape of <code class="language-plaintext highlighter-rouge">(150, 150, 3)</code>. If we represented this image as a <em>1-dimensional</em> vector, flattening it, it would contain <code class="language-plaintext highlighter-rouge">150*150*3 = 67500</code> elements.
+Calculating vector similarities becomes very difficult with this type of dimensionality.</p>
+
+<p><strong>How can we implement this using Tensorflow?</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Autoencoder</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">KERNEL_CONV</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">KERNEL_POOL</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Autoencoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">zero_pad_layer</span> <span class="o">=</span> <span class="n">ZeroPadding2D</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_first_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_sec_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_third_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_first_max_pool</span> <span class="o">=</span> <span class="n">MaxPooling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_sec_max_pool</span> <span class="o">=</span> <span class="n">MaxPooling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enc_third_max_pool</span> <span class="o">=</span> <span class="n">MaxPooling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_first_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_second_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_third_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_fourth_conv_2d_layer</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_CONV</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"sigmoid"</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">"same"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_first_up_samp_layer</span> <span class="o">=</span> <span class="n">UpSampling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_sec_up_samp_layer</span> <span class="o">=</span> <span class="n">UpSampling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dec_third_up_samp_layer</span> <span class="o">=</span> <span class="n">UpSampling2D</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">KERNEL_POOL</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">cropping_layer</span> <span class="o">=</span> <span class="n">Cropping2D</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">zero_pad_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_first_conv_2d_layer</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_first_max_pool</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_sec_conv_2d_layer</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_sec_max_pool</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_third_conv_2d_layer</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">enc_third_max_pool</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">encoded</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">):</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_first_conv_2d_layer</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_first_up_samp_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_second_conv_2d_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_sec_up_samp_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_third_conv_2d_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_third_up_samp_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dec_fourth_conv_2d_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cropping_layer</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">decoded</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decoded</span>
+</code></pre></div></div>
+
+<p><strong>How can we calculate similarities?</strong></p>
+
+<p>After we fit the neural network we can use the <code class="language-plaintext highlighter-rouge">encode</code> function to produce low dimensional representations of flattened images.
+We can then make use of <code class="language-plaintext highlighter-rouge">sklearn.neighbors.NearestNeighbors</code> class to compute a neighborhood of product images.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">squeeze</span>
+    <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
+
+    <span class="n">knn</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">knn</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">enc_flat_images</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">knn</span><span class="p">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">enc_flat_image</span><span class="p">,</span> <span class="n">return_distance</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">original_images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">squeeze</span><span class="p">(</span><span class="n">indices</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<p><strong>Results</strong></p>
+
+<p>Full code is hosted in <strong>GitHub</strong> <a href="https://github.com/Marko50/product-image-similarity">here</a>.</p>
+
+<p>I’ve used all the 150x150 3 RGB channel images present in this dataset <a href="https://www.kaggle.com/jonathanoheix/product-recommendation-based-on-visual-similarity">here</a>.</p>
+
+<p>The original image:
+<img src="/assets/img/posts/vae-product-recommendations/original.png" alt="gru" /></p>
+
+<p>The decoded image:
+<img src="/assets/img/posts/vae-product-recommendations/decoded.png" alt="gru" /></p>
+
+<p>The neighborhood
+<img src="/assets/img/posts/vae-product-recommendations/1_neighbor.png" alt="gru" />
+<img src="/assets/img/posts/vae-product-recommendations/2_neighbor.png" alt="gru" />
+<img src="/assets/img/posts/vae-product-recommendations/3_neighbor.png" alt="gru" />
+<img src="/assets/img/posts/vae-product-recommendations/4_neighbor.png" alt="gru" /></p>
+
+
+    </div>
+  </div>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
+      <div class="col-lg-3"><a href="https://github.com/Marko50"> <i class="bi-github" role="img"></i> <span>Marko50</span></a></div>
+      <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
+    <div>
+  </div>
+</footer>
+</body>
+
+</html>
