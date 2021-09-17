@@ -1,10 +1,6 @@
 programming:
   - path: assets/img/python.png
     label: Python
-  - path: assets/img/ruby.png
-    label: Ruby
-  - path: assets/img/javascript.png
-    label: Javascript
 cloud:
   - path: assets/img/sagemaker.png
     label: AWS Sagemaker
@@ -36,10 +32,8 @@ libraries:
     label: Numpy
   - path: assets/img/matplotlib.png
     label: Matplotlib
-  - path: assets/img/flask.png
-    label: Flask
-  - path: assets/img/rails.png
-    label: Rails
+  - path: assets/img/pyspark.png
+    label: Pyspark
 version-control:
   - path: assets/img/git.png
     label: Git

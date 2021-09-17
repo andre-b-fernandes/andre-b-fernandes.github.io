@@ -31,3 +31,4 @@ I finished with a **GPA of 15** (0-20) and in my MSc's thesis, I made a **Softwa
 I've recently started taking online courses and started by using the **Udemy** platform.
 
  - The first course I've completed is named **Machine Learning, Data Science and Deep Learning with Python** by **Frank Kane**, which is a very useful practical, cut-to-the-chase course for everyone wanting to start and get an initial grasp in Machine Learning.
+ - I've also completed **Spark and Python for Big Data with Pyspark** by **Jose Portilla**, which is a very simple course about using PySpark to tackle Machine Learning problems which use large quantities of data.

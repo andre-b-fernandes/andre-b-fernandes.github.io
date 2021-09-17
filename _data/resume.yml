@@ -32,13 +32,17 @@ prof-exp:
   - label: Jumpseller
     value: Machine Learning Engineer
     range: 2018-2021
-    icon: bi-bag
+    icon: bi-shop
     description: Initially worked in software web development and then fully converted to a machine learning engineer working on product recommendations and also performing some data engineering tasks.
+  - label: Farfetch
+    value: Machine Learning Engineer
+    range: 2021-Present
+    icon: bi-bag-check-fill
+    description: Recommendations team cluster. Worked with Pyspark and databricks building, deploying models and writing ETL pipelines.
 tech-skills:
   - Python
-  - Ruby (Rails)
-  - Javascript
   - Tensorflow
+  - Pyspark
   - Numpy
   - Matplotlib
   - Pandas
@@ -61,6 +65,8 @@ extra-curricular:
   - JobIT
 extra-certifications:
   - label: Machine Learning, Data Science and Deep Learning with Python on Udemy by Frank Kane
+    range: 2021
+  - label: Spark and Python for Big Data with Pyspark on Udemy by Jose Portilla
     range: 2021
 interests:
   - General Tech
