@@ -9,65 +9,66 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="My curriculum vitae" />
 <meta property="og:description" content="My curriculum vitae" />
-<link rel="canonical" href="https://marko50.github.io/technologies/" />
-<meta property="og:url" content="https://marko50.github.io/technologies/" />
+<link rel="canonical" href="http://localhost:4000/technologies/" />
+<meta property="og:url" content="http://localhost:4000/technologies/" />
 <meta property="og:site_name" content="André Fernandes" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Technologies" />
 <script type="application/ld+json">
-{"@type":"WebPage","headline":"Technologies","url":"https://marko50.github.io/technologies/","description":"My curriculum vitae","@context":"https://schema.org"}</script>
+{"@type":"WebPage","headline":"Technologies","url":"http://localhost:4000/technologies/","description":"My curriculum vitae","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://marko50.github.io/feed.xml" title="André Fernandes" /></head>
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="André Fernandes" /></head>
 <body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
 <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
 <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
 <link rel="stylesheet" href="/assets/css/main.css">
 <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div class="home">
-  <div class="row">
-    <div class="col-lg-2 justify-content-center align-middle">
-      <div class="card bg-light">
+        <div class="row">
+  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+    <div class="card border-0 navbar-bg">
+  <h4 class="card-title text-center"> André Fernandes</h4>
   <a href="/">
-    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="" style="width:50%; border-radius: 50%; transform: translateX(50%);">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
   </a>
   <div class="card-body">
-    <h5 class="card-title"> André Fernandes</h5>
     <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
     <p class="card-text"> FEUP, UPORTO, Portugal</p>
-    <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
-      
-      <a id="about" class="nav-link mb-2 border border-info text-center" href="/about" role="tab"> About me </a>
-      
-      <a id="academics" class="nav-link mb-2 border border-info text-center" href="/academics" role="tab"> Academics </a>
-      
-      <a id="prof-exp" class="nav-link mb-2 border border-info text-center" href="/prof-exp" role="tab"> Professional Experience </a>
-      
-      <a id="technologies" class="nav-link mb-2 border border-info text-center" href="/technologies" role="tab"> Technologies </a>
-      
-      <a id="posts" class="nav-link mb-2 border border-info text-center" href="/posts" role="tab"> Posts </a>
-      
-      <a id="resume" class="nav-link mb-2 border border-info text-center" href="/resume" role="tab"> Resume </a>
-      
-    </div>
+    <p class="card-text"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
+    <p class="card-text"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    
+      <p class="card-text"></p>
+        <a id="about" class="navbar-link" href="/about" role="tab"> About me </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="academics" class="navbar-link" href="/academics" role="tab"> Academics </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="prof-exp" class="navbar-link" href="/prof-exp" role="tab"> Professional Experience </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="technologies" class="navbar-link" href="/technologies" role="tab"> Technologies </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="posts" class="navbar-link" href="/posts" role="tab"> Posts </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="resume" class="navbar-link" href="/resume" role="tab"> Resume </a>
+      </p>
+    
   </div>
 </div>
 
+  </div>
 
-<script>
-  $('#navBarTab a').on('click', function (e) {
-    $(this).tab('show')
-  })
-
-  let path = window.location.pathname.replace(/\//g, '');
-  if(path && $("#" + path).length > 0) {
-    $("#" + path).addClass('active');
-  }
-</script>
-
-    </div>
-
-    <div class="col-lg-10 bg-light"><h1 class="page-heading mt-3 mb-4">Technologies</h1><div class="row">
+  <div class="col-lg-9 content-bg"><h1 class="page-heading mt-3 mb-4">Technologies</h1><div class="row">
   
     <div class="col-md-3 d-flex align-items-center justify-content-center">
       <img src="/assets/img/python.png" class="tech-image img-fluid" alt="Python">
@@ -147,22 +148,23 @@
   
 </div>
 
-    </div>
   </div>
 </div>
+<!-- <div class="home">
+</div> -->
 
       </div>
-    </main><footer class="site-footer h-card bg-light">
+    </main><!-- <footer class="site-footer h-card bg-light">
   <data class="u-url" href="/"></data>
 
   <div class="wrapper">
     <div class="row">
       <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
-      <div class="col-lg-3"><a href="https://github.com/Marko50"> <i class="bi-github" role="img"></i> <span>Marko50</span></a></div>
+      <div class="col-lg-3"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></div>
       <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
     <div>
   </div>
-</footer>
+</footer> -->
 </body>
 
 </html>

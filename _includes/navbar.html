@@ -1,27 +1,23 @@
-<div class="card bg-light">
+<div class="card border-0 navbar-bg">
+  <h4 class="card-title text-center"> {{ site.data.navbar.title }}</h4>
   <a href="/">
-    <img class="card-img-top mx-auto" src="/{{ site.profile_path }}" alt="" style="width:50%; border-radius: 50%; transform: translateX(50%);">
+    <img class="card-img-top mx-auto" src="/{{ site.profile_path }}" alt="">
   </a>
   <div class="card-body">
-    <h5 class="card-title"> {{ site.data.navbar.title }}</h5>
     <p class="card-text font-weight-bold"> {{ site.data.navbar.subtitle }}</p>
     <p class="card-text"> {{ site.data.navbar.description }}</p>
-    <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
-      {% for content in site.data.navbar.contents %}
-      <a id="{{ content.id }}" class="nav-link mb-2 border border-info text-center" href="{{ content.href }}" role="tab"> {{ content.title }} </a>
-      {% endfor %}
-    </div>
+    <p class="card-text">
+      {%- if site.github_username -%}<a href="https://github.com/{{ site.github_username| cgi_escape | escape }}"> <i class="bi-github" role="img"></i> <span>{{ site.github_username| escape }}</span></a>{%- endif -%}
+    </p>
+    <p class="card-text">
+      {%- if site.linkedin_username -%}<a href="https://www.linkedin.com/in/{{ site.linkedin_username| cgi_escape | escape }}"> <i class="bi-linkedin" role="img"></i> <span class="username">{{ site.linkedin_username| escape }}</span></a>{%- endif -%}
+    </p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    {% for content in site.data.navbar.contents %}
+      <p class="card-text"></p>
+        <a id="{{ content.id }}" class="navbar-link" href="{{ content.href }}" role="tab"> {{ content.title }} </a>
+      </p>
+    {% endfor %}
   </div>
 </div>
-
-
-<script>
-  $('#navBarTab a').on('click', function (e) {
-    $(this).tab('show')
-  })
-
-  let path = window.location.pathname.replace(/\//g, '');
-  if(path && $("#" + path).length > 0) {
-    $("#" + path).addClass('active');
-  }
-</script>

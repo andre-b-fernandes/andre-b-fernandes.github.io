@@ -3,7 +3,7 @@ personal-information:
     value: Fernando André Fernandes
     icon: bi-person-circle
   - label: Website
-    value: <a href="https://marko50.github.io"> https://marko50.github.io </a>
+    value: <a href="https://andre-b-fernandes.github.io"> https://andre-b-fernandes.github.io </a>
     icon: bi-globe
   - label: Nationality
     value: Portuguese
@@ -12,7 +12,7 @@ personal-information:
     value: fernandoandre49@gmail.com
     icon: bi-envelope-fill
   - label: Github
-    value: <a href="https://github.com/Marko50"> https://github.com/Marko50 </a>
+    value: <a href="https://github.com/andre-b-fernandes"> https://github.com/andre-b-fernandes </a>
     icon: bi-github
   - label: Linkedin
     value: <a href="https://www.linkedin.com/in/af-fernandes/"> https://www.linkedin.com/in/af-fernandes </a>

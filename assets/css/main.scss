@@ -4,10 +4,37 @@
 @import 'bootstrap/bootstrap';
 @import 'bootstrap-icons/bootstrap-icons.css';
 
+.navbar-bg {
+  background-color: #292525;
+}
+
+.card {
+  color: darkgrey;
+}
+
+.card-img-top {
+  width: 50%;
+  transform: translateX(50%);
+  border-radius: 50%
+}
+
+.navbar-link:visited {
+  color: white
+}
+
+.content-bg {
+  background-color: white;
+}
+
 div.wrapper {max-width:100%;}
+
+.page-content {
+  padding: 0;
+}
 
 body {
   font-size: 18px;
+  background-color: #292525;
 }
 
 @media (min-width: 768px) {
