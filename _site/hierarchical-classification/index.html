@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Hierarchical Classification with K-Means and a Neural Network | André Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Hierarchical Classification with K-Means and a Neural Network" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this blog post I’m going to be describing a proof of concept I made experimenting with hierarchical multiclass classification usin K-means clustering and a simple Artificial Neural Network. The full project code can be found here." />
+<meta property="og:description" content="In this blog post I’m going to be describing a proof of concept I made experimenting with hierarchical multiclass classification usin K-means clustering and a simple Artificial Neural Network. The full project code can be found here." />
+<link rel="canonical" href="http://localhost:4000/hierarchical-classification/" />
+<meta property="og:url" content="http://localhost:4000/hierarchical-classification/" />
+<meta property="og:site_name" content="André Fernandes" />
+<meta property="og:image" content="http://localhost:4000/hierarchical-classification.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-11-14T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="http://localhost:4000/hierarchical-classification.png" />
+<meta property="twitter:title" content="Hierarchical Classification with K-Means and a Neural Network" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Hierarchical Classification with K-Means and a Neural Network","dateModified":"2021-11-14T00:00:00+00:00","datePublished":"2021-11-14T00:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/hierarchical-classification/"},"image":"http://localhost:4000/hierarchical-classification.png","url":"http://localhost:4000/hierarchical-classification/","description":"In this blog post I’m going to be describing a proof of concept I made experimenting with hierarchical multiclass classification usin K-means clustering and a simple Artificial Neural Network. The full project code can be found here.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="André Fernandes" /></head>
+<body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+<script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+<script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="row">
+  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+    <div class="row">
+      <div class="col">
+        <div class="card border-0 navbar-bg">
+  <h4 class="card-title text-center"> André Fernandes</h4>
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
+  </a>
+  <div class="card-body">
+    <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
+    <p class="card-text"> FEUP, UPORTO, Portugal</p>
+    <p class="card-text"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
+    <p class="card-text"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    
+      <p class="card-text"></p>
+        <a id="about" class="navbar-link" href="/about" role="tab"> About me </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="academics" class="navbar-link" href="/academics" role="tab"> Academics </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="prof-exp" class="navbar-link" href="/prof-exp" role="tab"> Professional Experience </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="technologies" class="navbar-link" href="/technologies" role="tab"> Technologies </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="posts" class="navbar-link" href="/posts" role="tab"> Posts </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="resume" class="navbar-link" href="/resume" role="tab"> Resume </a>
+      </p>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-9 content-bg">
+    <div class="row">
+      <div class="col"><h1 class="page-heading mt-3 mb-4">Hierarchical Classification with K-Means and a Neural Network</h1><p>In this blog post I’m going to be describing a proof of concept I made experimenting with <strong>hierarchical multiclass classification</strong> usin <strong>K-means clustering</strong> and a simple <strong>Artificial Neural Network</strong>.
+The full project code can be found <a href="https://github.com/andre-b-fernandes/hierarchical-classification">here</a>.</p>
+
+<p><strong>Hierarchical Classification</strong></p>
+
+<p>Hierarchical classification is a type of classification task where you have a hierarchy tree and each label which is not at the <strong>root</strong> of the tree is associated with a previous label at an <strong>upper level</strong>.
+This means that every <strong>tree node, is a possible classification label</strong> and the <strong>tree leafs are the most
+specific labels</strong> which we can classifify a sample with.</p>
+
+<p><img src="/assets/img/posts/hierarchical-classification/tree.png" alt="tree" /></p>
+
+<p>Image taken from <a href="https://towardsdatascience.com/https-medium-com-noa-weiss-the-hitchhikers-guide-to-hierarchical-classification-f8428ea1e076">this</a> blog post.</p>
+
+<p>In this example we can see that the label <em>Persian</em> follows a hierarchical structure made of <em>Pets</em> &gt; <em>Cat</em> &gt; <em>Persian</em>.</p>
+
+<p>If we interpret this tree as a <strong>graph</strong>, we can conclude that this is a <strong>directed acyclic graph</strong> where each path you take will lead you to <strong>one and only one leaf node</strong>.</p>
+
+<p>So, in terms of classification, classifying something as a <em>Persian</em> will also classify it as a <em>Cat</em> and a <em>Pet</em> automatically,
+since there are no other paths in the graph which will lead us to that specific node.</p>
+
+<p>In practice, what we want is to be able to classify the most specifc category for each sample we have in a dataset.</p>
+
+<p><strong>Chosing a Dataset</strong></p>
+
+<p>For this <em>POC</em> I used <a href="https://www.kaggle.com/kashnitsky/hierarchical-text-classification">this</a> public <strong>Kaggle</strong> dataset which is a
+list of amazon public item reviews made by customers about sold products. Each product is labeled into categories which are structured
+into 3 different levels.
+It is <strong>not mandatory that each product has three levels</strong> of categories, they can have only two or even one.</p>
+
+<p>The original datasets are divided between <strong>test and validation sets</strong>. The only contents which were not present there were the parsed versions of the 40k and 10k test and validation sets.</p>
+
+<p>Both implementations for design reasons, <strong>can only output categories which were present in the train dataset</strong> (I know, I know…) so I evaluated the impact this could take in the final metric calculation using as follows:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="c1"># reading the train dataframe
+</span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"data/amazon/train_parsed_40k.csv"</span><span class="p">)</span>
+<span class="c1"># reading the validation dataframe
+</span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"data/amazon/val_parsed_10k.csv"</span><span class="p">)</span>
+<span class="c1"># a set of unique cateogories of the training dataframe
+</span><span class="n">cats1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s">'CATEGORY'</span><span class="p">].</span><span class="n">unique</span><span class="p">())</span>
+<span class="c1"># a set of unique cateogories of the validation dataframe
+</span><span class="n">cats2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="s">'CATEGORY'</span><span class="p">].</span><span class="n">unique</span><span class="p">())</span>
+<span class="c1"># which categories are in the validation dataframe but are not in the test dataframe
+# these categories are the ones we cannot predict
+</span><span class="n">missing</span> <span class="o">=</span> <span class="n">cats2</span> <span class="o">-</span> <span class="n">cats1</span>
+<span class="n">missing</span>
+<span class="o">&gt;&gt;</span> <span class="p">{</span><span class="s">'coatings batters'</span><span class="p">,</span> <span class="s">'hydrometers'</span><span class="p">,</span> <span class="s">'chocolate covered nuts'</span><span class="p">,</span> <span class="s">'breeding tanks'</span><span class="p">,</span> <span class="s">'flying toys'</span><span class="p">,</span> <span class="s">'dried fruit'</span><span class="p">,</span> <span class="s">'exercise wheels'</span><span class="p">,</span> <span class="s">'shampoo'</span><span class="p">,</span> <span class="s">'lamb'</span><span class="p">}</span>
+<span class="c1"># how many rows of the validation dataframe have these categories 
+</span><span class="nb">len</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="n">df2</span><span class="p">[</span><span class="s">'CATEGORY'</span><span class="p">].</span><span class="n">isin</span><span class="p">(</span><span class="n">missing</span><span class="p">)])</span>
+<span class="o">&gt;&gt;</span> <span class="mi">11</span>
+</code></pre></div></div>
+
+<p>You can construct the datasets to be used in the code by running <code class="language-plaintext highlighter-rouge">python -m entrypoint parse</code>, after
+you clone the repository.</p>
+
+<p>Since there are only 11 rows which we won’t be able to predict out of 10k this isn’t a big deal.</p>
+
+<p><strong>Transfer Learning</strong></p>
+
+<p>Before jumping into using K-means clustering, I had to find a way to represent the movie reviews into a <strong>vectorized format</strong>.
+To simplify this task, since all the reviews are in English, I used the <strong>Google Universal Encoder</strong> which we can download from <strong>TensorHub</strong> which will output a <strong>512-dimensional embedding vector</strong> representing the sentence provided as input.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tensorflow_hub</span> <span class="k">as</span> <span class="n">hub</span>
+
+<span class="n">TSFLOW_UNIV_ENC_URL</span> <span class="o">=</span> <span class="s">"https://tfhub.dev/google/universal-sentence-encoder/4"</span>
+
+<span class="k">def</span> <span class="nf">load_universal_encoder</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="s">"""
+    A function which loads the google universal encoder
+    from TensorHub. It will cache it after it runs the first
+    time.
+    Returns:
+        A Google Universal Encoder instance.
+    """</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'TFHUB_DOWNLOAD_PROGRESS'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"1"</span>
+    <span class="n">encoder</span> <span class="o">=</span> <span class="n">hub</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">TSFLOW_UNIV_ENC_URL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoder</span>
+</code></pre></div></div>
+
+<p><strong>Metric</strong></p>
+
+<p>The main metric to be calculated was a <strong>hit ratio</strong>, basically computing the number of times the 
+model could guess the correct category out of the total validation samples.
+We return the value in <strong>percentage</strong>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">hit_ratio</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="s">"""
+    A function which calculates the hit ratio of a results dataframe.
+    Args:
+        df pd.DataFrame A pandas dataframe with computed results
+        and a prediction column for each product
+    Returns:
+        float The hit ratio, that is, the number of times it matched
+        the correct category out of the total length in percentage.
+    """</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">PREDICTION_COL</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="n">CATEGORY_COL</span><span class="p">]])</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">counter</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">return</span> <span class="n">ratio</span>
+</code></pre></div></div>
+
+<p><strong>K-Means Clustering</strong></p>
+
+<p>The idea behind using K-means clustering for hierarchical classification is:</p>
+<ol>
+  <li>By using the embedding vectors provided by the universal encoder we can use k-means to cluster the vectors into N different clusters, where N is the number of possible different categories present in the dataset.</li>
+  <li>After this, for every validation sample vector we verify the cluster on which it is located, and extract the most specific category for that sample. This makes an association between that cluster and that category label. Then, inside a dictionary we build a histogram where for each cluster prediction we have the number of associations between each category and each cluster.</li>
+  <li>Finnaly, we can now find a heuristic which can help us map a cluster ID into a category name.
+To simplify things, I choose for each cluster the label with the highest association count. However there are more possibilities for this, such as doing a similar implementation to what is done in calculating TF-IDF in text processing tasks.</li>
+</ol>
+
+<p><img src="/assets/img/posts/hierarchical-classification/kmeans.png" alt="kemeans" /></p>
+
+<p>Below, the <code class="language-plaintext highlighter-rouge">build_histogram</code> function builds the cluster-category association histogram
+and the <code class="language-plaintext highlighter-rouge">build_label_mapper</code> constructs a mapping dictionary between a cluster and a category.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_histogram</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">defaultdict</span><span class="p">:</span>
+    <span class="s">"""
+    A function which builds a histogram for the number of
+    matches a category has for each cluster. A cluster
+    might get matched with multiple categories, this way
+    we can evaluate the highest category match per cluster and
+    later on associate each cluster with a category.
+    Args:
+        df pd.DataFrame A pandas dataframe with computed results
+        and a prediction column for each product
+    Returns:
+        defaultdict A default dictionary whose default value is 
+        another defaultdictionary whose default value is int(0)
+    """</span>
+    <span class="n">histogram</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+        <span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s">"Building label histogram...."</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">RAW_PREDICTION</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">CATEGORY_COL</span><span class="p">]</span>
+        <span class="n">histogram</span><span class="p">[</span><span class="n">prediction</span><span class="p">][</span><span class="n">label</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> 
+    
+    <span class="k">return</span> <span class="n">histogram</span>
+
+<span class="k">def</span> <span class="nf">build_label_mapper</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="s">""" A function which maps a cluster label prediction
+    to a category based on a computed histogram, taking into
+    account a provided results pandas dataframe.
+    Args:
+        df pd.DataFrame A pandas dataframe with computed results
+        and a prediction column for each product
+    Returns:
+        dict A dictionary which maps a cluster label to a category name.
+    """</span>
+    <span class="n">histogram</span> <span class="o">=</span> <span class="n">build_histogram</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">mapper</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">histogram</span><span class="p">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s">"Building label mapper..."</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">histogram</span><span class="p">)):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">histogram</span><span class="p">[</span><span class="n">prediction</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">mapper</span><span class="p">[</span><span class="n">prediction</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+
+    <span class="k">return</span> <span class="n">mapper</span>
+</code></pre></div></div>
+
+<p>The hit ratio revolved around 59% to 60%</p>
+
+<p>You can run the kmeans approach using <code class="language-plaintext highlighter-rouge">python -m entrypoint kmeans</code>, after cloning the repository.</p>
+
+<p><strong>Comparing the results with an ANN</strong></p>
+
+<p>The implemented neural network was a simple feed forward neural network
+with 2 dense hidden layer and a final dense output layer, with a softmax activatio function
+over the number of possible categories. Since the labels were the one hot encoded versions of the categories
+each predicted final tensor would be compared with the correct one hot encoded category real label, and the
+categorical cross entropy loss will be computed.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ANN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="s">""" An artificial neural network model using the tensorflow subclassing API.
+    It takes into account the number of available categories
+    which we can predict. 
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_categories</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="s">"""
+        RNN's constructor.
+        Args:
+            n_categories: int The number of categories.
+        """</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dense</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"relu"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">out_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="n">n_categories</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s">"softmax"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">Adam</span><span class="p">(),</span>
+            <span class="n">loss</span><span class="o">=</span><span class="n">CategoricalCrossentropy</span><span class="p">(</span><span class="n">from_logits</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">CategoricalAccuracy</span><span class="p">()]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+        <span class="s">"""
+        A function which is executed during training at each
+        iteration.
+        Args:
+            inputs: A tensor which will be provided as an input
+            which will be an embedding vector.
+        """</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dense</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">out_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>You can run the ANN approach using <code class="language-plaintext highlighter-rouge">python -m entrypoint kmeans</code>, after cloning the repository.</p>
+
+<p>The calculated hit ratio was around 65,7% so a bit above the K-means implementation.</p>
+
+
+      </div>
+    </div> 
+    <div class="row content-bg" style="height: 85%;">
+    </div>
+  </div> 
+</div>
+
+      </div>
+    </main><!-- <footer class="site-footer h-card bg-light">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
+      <div class="col-lg-3"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></div>
+      <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
+    <div>
+  </div>
+</footer> -->
+</body>
+
+</html>

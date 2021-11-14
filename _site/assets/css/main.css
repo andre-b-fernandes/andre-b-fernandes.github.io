@@ -2301,7 +2301,7 @@ a.text-dark:hover, a.text-dark:focus { color: #1d2124 !important; }
 
 div.wrapper { max-width: 100%; }
 
-.page-content { padding: 0; }
+.page-content { padding: 1; }
 
 body { font-size: 18px; background-color: #292525; }
 

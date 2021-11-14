@@ -2,17 +2,26 @@
 layout: default
 ---
 
+
 <div class="row">
   <div class="col-lg-3 justify-content-center align-middle navbar-bg">
-    {% include navbar.html %}
+    <div class="row">
+      <div class="col">
+        {% include navbar.html %}
+      </div>
+    </div>
   </div>
 
   <div class="col-lg-9 content-bg">
-    {%- if page.title -%}
-      <h1 class="page-heading mt-3 mb-4">{{ page.title }}</h1>
-    {%- endif -%}
-    {{ content }}
-  </div>
+    <div class="row">
+      <div class="col">
+        {%- if page.title -%}
+          <h1 class="page-heading mt-3 mb-4">{{ page.title }}</h1>
+        {%- endif -%}
+        {{ content }}
+      </div>
+    </div> 
+    <div class="row content-bg" style="height: 85%;">
+    </div>
+  </div> 
 </div>
-<!-- <div class="home">
-</div> -->

@@ -9,15 +9,15 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="My curriculum vitae" />
 <meta property="og:description" content="My curriculum vitae" />
-<link rel="canonical" href="https://andre-b-fernandes.github.io/posts/" />
-<meta property="og:url" content="https://andre-b-fernandes.github.io/posts/" />
+<link rel="canonical" href="http://localhost:4000/posts/" />
+<meta property="og:url" content="http://localhost:4000/posts/" />
 <meta property="og:site_name" content="André Fernandes" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Posts" />
 <script type="application/ld+json">
-{"@type":"WebPage","headline":"Posts","url":"https://andre-b-fernandes.github.io/posts/","description":"My curriculum vitae","@context":"https://schema.org"}</script>
+{"@type":"WebPage","headline":"Posts","url":"http://localhost:4000/posts/","description":"My curriculum vitae","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://andre-b-fernandes.github.io/feed.xml" title="André Fernandes" /></head>
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="André Fernandes" /></head>
 <body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
 <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
 <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
@@ -26,7 +26,9 @@
       <div class="wrapper">
         <div class="row">
   <div class="col-lg-3 justify-content-center align-middle navbar-bg">
-    <div class="card border-0 navbar-bg">
+    <div class="row">
+      <div class="col">
+        <div class="card border-0 navbar-bg">
   <h4 class="card-title text-center"> André Fernandes</h4>
   <a href="/">
     <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
@@ -66,9 +68,33 @@
   </div>
 </div>
 
+      </div>
+    </div>
   </div>
 
-  <div class="col-lg-9 content-bg"><h1 class="page-heading mt-3 mb-4">Posts</h1><div class="row">
+  <div class="col-lg-9 content-bg">
+    <div class="row">
+      <div class="col"><h1 class="page-heading mt-3 mb-4">Posts</h1><div class="row">
+  
+    <div class="col-sm-4 mt-3">
+      <div class="card zoom">
+        <a href="/hierarchical-classification/" target="_blank">
+          Hierarchical Classification with K-Means and a Neural Network
+          <img class="mt-1 card-img-top" src="/assets/img/posts/hierarchical-classification.png">
+        </a>
+        <p class="ml-1 card-text">
+          
+            <small class="text-muted"> #machine-learning </small>
+          
+            <small class="text-muted"> #classification </small>
+          
+            <small class="text-muted"> #ann </small>
+          
+            <small class="text-muted"> #k-means </small>
+          
+        </p>
+      </div>
+    </div>
   
     <div class="col-sm-4 mt-3">
       <div class="card zoom">
@@ -111,7 +137,7 @@
     <div class="col-sm-4 mt-3">
       <div class="card zoom">
         <a href="/gru4rec/" target="_blank">
-          GRU4REC recommender system
+          Gated Recurrent Units - GRU4REC recommender system
           <img class="mt-1 card-img-top" src="/assets/img/posts/gru4rec.png">
         </a>
         <p class="ml-1 card-text">
@@ -164,10 +190,12 @@
   
 </div>
 
-  </div>
+      </div>
+    </div> 
+    <div class="row content-bg" style="height: 85%;">
+    </div>
+  </div> 
 </div>
-<!-- <div class="home">
-</div> -->
 
       </div>
     </main><!-- <footer class="site-footer h-card bg-light">
