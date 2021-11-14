@@ -16,7 +16,7 @@ Hierarchical classification is a type of classification task where you have a hi
 This means that every **tree node, is a possible classification label** and the **tree leafs are the most
 specific labels** which we can classifify a sample with.
 
-![tree](/assets/img/posts/hierarchic12al-classification/tree.png)
+![tree](/assets/img/posts/hierarchical-classification/tree.png)
 
 Image taken from [this](https://towardsdatascience.com/https-medium-com-noa-weiss-the-hitchhikers-guide-to-hierarchical-classification-f8428ea1e076) blog post.
 
