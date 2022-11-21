@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>What really is vectorization and how does it work? | André Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.2" />
+<meta property="og:title" content="What really is vectorization and how does it work?" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas." />
+<meta property="og:description" content="In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas." />
+<link rel="canonical" href="https://andre-b-fernandes.github.io/what-is-vectorization/" />
+<meta property="og:url" content="https://andre-b-fernandes.github.io/what-is-vectorization/" />
+<meta property="og:site_name" content="André Fernandes" />
+<meta property="og:image" content="https://andre-b-fernandes.github.io/vectorization.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-26T00:00:00+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://andre-b-fernandes.github.io/vectorization.png" />
+<meta property="twitter:title" content="What really is vectorization and how does it work?" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-06-26T00:00:00+01:00","datePublished":"2021-06-26T00:00:00+01:00","description":"In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas.","headline":"What really is vectorization and how does it work?","image":"https://andre-b-fernandes.github.io/vectorization.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://andre-b-fernandes.github.io/what-is-vectorization/"},"url":"https://andre-b-fernandes.github.io/what-is-vectorization/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://andre-b-fernandes.github.io/feed.xml" title="André Fernandes" /></head>
+<body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+<script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+<script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="row">
+  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+    <div class="row">
+      <div class="col">
+        <div class="card border-0 navbar-bg">
+  <h4 class="card-title text-center"> André Fernandes</h4>
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
+  </a>
+  <div class="card-body">
+    <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
+    <p class="card-text"> FEUP, UPORTO, Portugal</p>
+    <p class="card-text"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
+    <p class="card-text"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    
+      <p class="card-text"></p>
+        <a id="about" class="navbar-link" href="/about" role="tab"> About me </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="academics" class="navbar-link" href="/academics" role="tab"> Academics </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="prof-exp" class="navbar-link" href="/prof-exp" role="tab"> Professional Experience </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="technologies" class="navbar-link" href="/technologies" role="tab"> Technologies </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="posts" class="navbar-link" href="/posts" role="tab"> Posts </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="resume" class="navbar-link" href="/resume" role="tab"> Resume </a>
+      </p>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-9 content-bg">
+    <div class="row">
+      <div class="col"><h1 class="page-heading mt-3 mb-4">What really is vectorization and how does it work?</h1><p>In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with 
+<strong>vectorization</strong>. We hear a lot about it with the way typicall machine learning libraries work such as <strong>numpy</strong> or <strong>pandas</strong>.</p>
+
+<p>But what really is vectorization and how does it work in practice?</p>
+
+<p><strong>SIMD</strong></p>
+
+<p>One of the ways to perform vectorization is when your program is compiled to vectorized CPU instructions. This type of <em>parallel processing</em> is called <strong>Single Instruction Multiple Data</strong> (SIMD) under <strong>Flynn’s Taxonomy</strong>.</p>
+
+<p>But what are vectorized CPU instructions?
+Modern CPU’s support multiple instruction sets extensions which implement SIMD.</p>
+
+<p>Examples of these sets are <strong>MMX</strong>, <strong>SSE</strong>, <strong>AVX</strong>, etc… and are available on modern Intel and AMD CPU’s. These instruction sets were developed and improved along the years of microprocessure architecture development.</p>
+
+<p>For an historical reference, AVX was extended into AVX2 for the first time in 2013 when Intel launched the Haswell microprocessor 
+architecture.</p>
+
+<p><strong>Comparison between non-vectorization and vectorization behaviour</strong></p>
+
+<p>A normal machine cycle will include the <strong>Fetching Stage</strong> where the CPU will fetch the instruction and data from the registers, it will then decode the instructions in the <strong>Decoder Stage</strong> and emit the relevant signals to the ALU in the <strong>Execution Stage</strong>.
+An <strong>ALU</strong>(Arithmetical Logic Unit) is a digital circuit which is responsible for arithmetical operations on operands.</p>
+
+<p>In the figure below the Decoder Stage is omitted.
+Normal registers have a fixed bit length dimension where data is stored, and if an operation takes two operands 
+an ALU will perform an operation on these 2 operands during the Execution Stage.</p>
+
+<p>In a vectorized architecture, vectors are stored in <strong>Vector Registers</strong> which behave similarly to <strong>Scalar Registers</strong>
+and are divided into a fixed number of chunks supporting more than one variable.</p>
+
+<p>E.g if we had a scalar register of 128 bits, a similar vector register could store 4 elements of 32 bits.</p>
+
+<p>Loading data from a register will load multiple elements at a time, in one single machine cycle. Modern CPU’s support multiple ALU’s and so we can perform multiple independent operations in parallel.</p>
+
+<p><img src="/assets/img/posts/vectorization/Vectorization.png" alt="vectorization" /></p>
+
+<p><strong>Hinting the compiler</strong></p>
+
+<p>Now the question is how can we hint the compiler to compile our code with a vectorized instruction set.
+We will explore 2 options:</p>
+
+<ol>
+  <li><strong>Vector Intrisics</strong></li>
+  <li><strong>Auto Vectorization</strong></li>
+</ol>
+
+<p>I made a proof of concept <a href="https://github.com/andre-b-fernandes/vectorization">Github Repository</a> which you can explore.</p>
+
+<p>Lets take as an example the task of multiplying two square matrices.
+Each matrix is a floating pointer flat array and the matrix is stored in row-major.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">matrixMultiplication</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">first</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">second</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">result</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">){</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">){</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">first</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">second</span><span class="p">[</span><span class="n">k</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">];</span>
+            <span class="p">}</span> 
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The code above implements the standard matrix multiplication algorithm (without any improvements) whose
+time complexity is <strong>O(n<sup>3</sup>)</strong>.</p>
+
+<p><strong>Vector Instrisics</strong></p>
+
+<p>Vector intrisics feel like regular functions you call in normal C++ source code, but they are <strong>compiler intrisic functions</strong> meaning that they are implented directly in the compilers.
+They are useful since they help hint the compiler to use vectorized instructions, since the compiler has 
+a intimate knowledge of the function and can integrate it and optimize it for better usage.</p>
+
+<p>The vector intrisics you’ll see below either finish with <code class="language-plaintext highlighter-rouge">ss</code> or <code class="language-plaintext highlighter-rouge">ps</code>. That is because <code class="language-plaintext highlighter-rouge">ss</code> stands for <strong>scalar instructions</strong> and <code class="language-plaintext highlighter-rouge">ps</code> stands for <strong>packed instructions</strong>.
+Packed operations operate on <strong>a vector in parallel</strong> with a single instruction while scalar instructions
+operate only <strong>one element</strong>.</p>
+
+<p>Some of the operations below need to be performed on <strong>32 byte aligned memory addresses</strong> (or 16 in case of 4 packed operations) which means that the memory address needs to be divisable by 32.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">vectorizedMatrixMultiplication4</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">first</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">second</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">result</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">j</span><span class="o">+=</span><span class="mi">4</span><span class="p">){</span>
+            <span class="n">__m128</span> <span class="n">row</span> <span class="o">=</span> <span class="n">_mm_setzero_ps</span><span class="p">();</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span> <span class="p">){</span>
+                <span class="c1">// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.</span>
+                <span class="c1">// Since its row X column, the each row element will have to be multiplied by each member of the column.</span>
+                <span class="n">__m128</span> <span class="n">first_packed</span> <span class="o">=</span> <span class="n">_mm_broadcast_ss</span><span class="p">(</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">array_size</span> <span class="o">+</span> <span class="n">k</span><span class="p">);</span>
+                <span class="c1">// row of the second matrix.</span>
+                <span class="n">__m128</span> <span class="n">second_packed</span> <span class="o">=</span> <span class="n">_mm_load_ps</span><span class="p">(</span><span class="n">second</span> <span class="o">+</span> <span class="n">k</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">);</span>
+                <span class="n">__m128</span> <span class="n">multiplied_packed</span> <span class="o">=</span> <span class="n">_mm_mul_ps</span><span class="p">(</span><span class="n">first_packed</span><span class="p">,</span> <span class="n">second_packed</span><span class="p">);</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">_mm_add_ps</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">multiplied_packed</span><span class="p">);</span>
+            <span class="p">}</span> 
+            <span class="n">_mm_store_ps</span><span class="p">(</span><span class="n">result</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="n">row</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>In the code above we used 6 intrisics:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">_mm_set_zero_ps</code>: Create a vector of 4 zeros.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm_broadcast_ss</code>: Broadcast an element pointed by <code class="language-plaintext highlighter-rouge">first + i * array_size l +</code> 4 times to the array.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm_load_ps</code>: Load 4 consequentive floating type numbers from a 16 byte aligned memory address.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm_mul_ps</code>: Vectorized multiplication</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm_add_ps</code>: Vectorized addition</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm_store_ps</code>: Store the resulting calculation of 4 numbers in a memory address.</li>
+</ol>
+
+<p>All these operations return or interact with <code class="language-plaintext highlighter-rouge">__m128</code> types which is a packed vector type holding
+4 32-bit floating point values, which the compiler will store on vector registers.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">vectorizedMatrixMultiplication8</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">first</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">second</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">result</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">j</span><span class="o">+=</span><span class="mi">8</span><span class="p">){</span>
+            <span class="n">__m256</span> <span class="n">row</span> <span class="o">=</span> <span class="n">_mm256_setzero_ps</span><span class="p">();</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">array_size</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span> <span class="p">){</span>
+                <span class="c1">// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.</span>
+                <span class="c1">// Since its row X column, the each row element will have to be multiplied by each member of the column.</span>
+                <span class="n">__m256</span> <span class="n">first_packed</span> <span class="o">=</span> <span class="n">_mm256_broadcast_ss</span><span class="p">(</span><span class="n">first</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">array_size</span> <span class="o">+</span> <span class="n">k</span><span class="p">);</span>
+                <span class="c1">// row of the second matrix.</span>
+                <span class="n">__m256</span> <span class="n">second_packed</span> <span class="o">=</span> <span class="n">_mm256_load_ps</span><span class="p">(</span><span class="n">second</span> <span class="o">+</span> <span class="n">k</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">);</span>
+                <span class="n">__m256</span> <span class="n">multiplied_packed</span> <span class="o">=</span> <span class="n">_mm256_mul_ps</span><span class="p">(</span><span class="n">first_packed</span><span class="p">,</span> <span class="n">second_packed</span><span class="p">);</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">_mm256_add_ps</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">multiplied_packed</span><span class="p">);</span>
+            <span class="p">}</span> 
+            <span class="n">_mm256_store_ps</span><span class="p">(</span><span class="n">result</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">array_size</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="n">row</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Similarly, in the code above we used 6 intrisics:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_setzero_ps</code>: Create a vector of 8 zeros.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_broadcast_ss</code>: Broadcast an element pointed by <code class="language-plaintext highlighter-rouge">first + i * array_size l +</code> 8 times to the array.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_load_ps</code>: Load 8 consequentive floating type numbers from a 32 byte aligned memory address.</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_mul_ps</code>: Vectorized multiplication</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_add_ps</code>: Vectorized addition</li>
+  <li><code class="language-plaintext highlighter-rouge">_mm256_store_ps</code>: Store the resulting calculation of 4 numbers in a memory address.</li>
+</ol>
+
+<p>All these operations return or interact with <code class="language-plaintext highlighter-rouge">__m256</code> types which is a packed vector type holding
+8 32-bit floating point values, which the compiler will store on vector registers.</p>
+
+<p>For more vector intrisics check <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=4294,6118,6121,153,151,153,193,101,153,112,101,614">Intel intrisic guide</a>.</p>
+
+<p><strong>Auto Vectorization</strong></p>
+
+<p><strong>Assembly code comparison</strong></p>
+
+<p>We can debug the assembly file result of the compilation process with <code class="language-plaintext highlighter-rouge">g++ -S ...</code> before assembling and linking it.</p>
+
+<p>For a simple matrix multiplication let’s take a look at part of the assembly code generated by the compiler.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_Z20matrixMultiplicationPfS_S_:
+(...)
+.L8:
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm1
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-4(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-24(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm2
+	movl	-4(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-32(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm0
+	mulss	%xmm2, %xmm0
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	addss	%xmm1, %xmm0
+	movss	%xmm0, (%rax)
+	addl	$1, -4(%rbp)
+(...)
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_Z31vectorizedMatrixMultiplication4PfS_S_:
+(...)
+.L19:
+	movl	-180(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-172(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-200(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -160(%rbp)
+	movq	-160(%rbp), %rax
+	vbroadcastss	(%rax), %xmm0
+	nop
+	vmovaps	%xmm0, -128(%rbp)
+	movl	-172(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-176(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-208(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -168(%rbp)
+	movq	-168(%rbp), %rax
+	vmovaps	(%rax), %xmm0
+	vmovaps	%xmm0, -112(%rbp)
+	vmovaps	-128(%rbp), %xmm0
+	vmovaps	%xmm0, -48(%rbp)
+	vmovaps	-112(%rbp), %xmm0
+	vmovaps	%xmm0, -32(%rbp)
+	vmovaps	-48(%rbp), %xmm0
+	vmulps	-32(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -96(%rbp)
+	vmovaps	-144(%rbp), %xmm0
+	vmovaps	%xmm0, -80(%rbp)
+	vmovaps	-96(%rbp), %xmm0
+	vmovaps	%xmm0, -64(%rbp)
+	vmovaps	-80(%rbp), %xmm0
+	vaddps	-64(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -144(%rbp)
+	addl	$1, -172(%rbp)
+(...)
+</code></pre></div></div>
+
+<p>These figures above show part of the instruction set used in the assembly result of our c++ code.
+You can notice the difference in the used instruction set from the traditional matrix factorization (<code class="language-plaintext highlighter-rouge">_Z20matrixMultiplicationPfS_S_</code>)
+to the vectorized one (<code class="language-plaintext highlighter-rouge">_Z31vectorizedMatrixMultiplication4PfS_S_</code>).</p>
+
+<p>Two very quick examples are the usage of <code class="language-plaintext highlighter-rouge">imull</code> and <code class="language-plaintext highlighter-rouge">addl</code>
+in contrast with <code class="language-plaintext highlighter-rouge">vmulps</code> and <code class="language-plaintext highlighter-rouge">vaddps</code> respectively.</p>
+
+<p><strong>Auto-Vectorization</strong></p>
+
+<p>Auto-vectorization essentially means that we let the compiler optimize our calculation loops by itself, without hinting, which will work for traditional cases.</p>
+
+<p>Take a loot at the following command: 
+<code class="language-plaintext highlighter-rouge">g++ -ftree-vectorize -mavx ...</code></p>
+
+<p>We’re only aiming for vectorization, so we will omit level 3 optimization (<code class="language-plaintext highlighter-rouge">-O3</code>) and that’s what the <code class="language-plaintext highlighter-rouge">ftree-vectorize</code> compiler flag stands for.</p>
+
+<p>We also need to target a valid SIMD instruction set extension so that
+it can be used by the compiler. That’s what the <code class="language-plaintext highlighter-rouge">-mavx</code> flag does.</p>
+
+<p><strong>Execution time comparison</strong></p>
+
+<p>The results below were done for a squared matrix of 1600 by 1600.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Average Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Simple Matrix Factorization</td>
+      <td>14933 ms</td>
+    </tr>
+    <tr>
+      <td>Auto-Vectorization</td>
+      <td>11962 ms</td>
+    </tr>
+    <tr>
+      <td>Vectorized Matrix Multiplication (4)</td>
+      <td>9817 ms</td>
+    </tr>
+    <tr>
+      <td>Vectorized Matrix Multiplication (8)</td>
+      <td>6143 ms</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>References</strong></p>
+
+<ol>
+  <li>
+    <p><a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html">Intel intrisic guide</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://www.linuxjournal.com/content/introduction-gcc-compiler-intrinsics-vector-processing">Linux journal introduction to intrisics</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://www.jsums.edu/robotics/files/2016/12/FECS17_Proceedings-FEC3555.pdf">CPU vectorization  Jackson State University papper</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.blog/2020/07/08/improving-performance-with-simd-intrinsics-in-three-use-cases/">Stack Overflow blog post</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://www.cs.uic.edu/~ajayk/c566/VectorProcessors.pdf">University of Illinois deck</a>.</p>
+  </li>
+</ol>
+
+      </div>
+    </div> 
+    <div class="row content-bg" style="height: 85%;">
+    </div>
+  </div> 
+</div>
+
+      </div>
+    </main><!-- <footer class="site-footer h-card bg-light">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
+      <div class="col-lg-3"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></div>
+      <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
+    <div>
+  </div>
+</footer> -->
+</body>
+
+</html>

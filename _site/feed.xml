@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://andre-b-fernandes.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://andre-b-fernandes.github.io/" rel="alternate" type="text/html" /><updated>2021-11-14T23:17:45+00:00</updated><id>https://andre-b-fernandes.github.io/feed.xml</id><title type="html">André Fernandes</title><subtitle>My curriculum vitae</subtitle><entry><title type="html">Hierarchical Classification with K-Means and a Neural Network</title><link href="https://andre-b-fernandes.github.io/hierarchical-classification/" rel="alternate" type="text/html" title="Hierarchical Classification with K-Means and a Neural Network" /><published>2021-11-14T00:00:00+00:00</published><updated>2021-11-14T00:00:00+00:00</updated><id>https://andre-b-fernandes.github.io/hierarchical-classification</id><content type="html" xml:base="https://andre-b-fernandes.github.io/hierarchical-classification/">&lt;p&gt;In this blog post I’m going to be describing a proof of concept I made experimenting with &lt;strong&gt;hierarchical multiclass classification&lt;/strong&gt; usin &lt;strong&gt;K-means clustering&lt;/strong&gt; and a simple &lt;strong&gt;Artificial Neural Network&lt;/strong&gt;.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://andre-b-fernandes.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://andre-b-fernandes.github.io/" rel="alternate" type="text/html" /><updated>2022-11-21T16:24:50+00:00</updated><id>https://andre-b-fernandes.github.io/feed.xml</id><title type="html">André Fernandes</title><subtitle>My curriculum vitae</subtitle><entry><title type="html">Hierarchical Classification with K-Means and a Neural Network</title><link href="https://andre-b-fernandes.github.io/hierarchical-classification/" rel="alternate" type="text/html" title="Hierarchical Classification with K-Means and a Neural Network" /><published>2021-11-14T00:00:00+00:00</published><updated>2021-11-14T00:00:00+00:00</updated><id>https://andre-b-fernandes.github.io/hierarchical-classification</id><content type="html" xml:base="https://andre-b-fernandes.github.io/hierarchical-classification/">&lt;p&gt;In this blog post I’m going to be describing a proof of concept I made experimenting with &lt;strong&gt;hierarchical multiclass classification&lt;/strong&gt; usin &lt;strong&gt;K-means clustering&lt;/strong&gt; and a simple &lt;strong&gt;Artificial Neural Network&lt;/strong&gt;.
 The full project code can be found &lt;a href=&quot;https://github.com/andre-b-fernandes/hierarchical-classification&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Hierarchical Classification&lt;/strong&gt;&lt;/p&gt;
@@ -38,16 +38,16 @@ It is &lt;strong&gt;not mandatory that each product has three levels&lt;/strong&
 &lt;span class=&quot;c1&quot;&gt;# reading the validation dataframe
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;data/amazon/val_parsed_10k.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;# a set of unique cateogories of the training dataframe
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cats1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'CATEGORY'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cats1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;CATEGORY&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;# a set of unique cateogories of the validation dataframe
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cats2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'CATEGORY'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cats2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;CATEGORY&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unique&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;# which categories are in the validation dataframe but are not in the test dataframe
 # these categories are the ones we cannot predict
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;missing&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cats2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cats1&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;missing&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'coatings batters'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'hydrometers'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'chocolate covered nuts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'breeding tanks'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'flying toys'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'dried fruit'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'exercise wheels'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'shampoo'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'lamb'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;coatings batters&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;hydrometers&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;chocolate covered nuts&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;breeding tanks&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;flying toys&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;dried fruit&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;exercise wheels&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;shampoo&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;lamb&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;# how many rows of the validation dataframe have these categories 
-&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'CATEGORY'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;missing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;CATEGORY&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;missing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -74,7 +74,7 @@ To simplify this task, since all the reviews are in English, I used the &lt;stro
     Returns:
         A Google Universal Encoder instance.
     &quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'TFHUB_DOWNLOAD_PROGRESS'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;1&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;TFHUB_DOWNLOAD_PROGRESS&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;1&quot;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;encoder&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;load&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TSFLOW_UNIV_ENC_URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;encoder&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -178,7 +178,7 @@ categorical cross entropy loss will be computed.&lt;/p&gt;
     &quot;&quot;&quot;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n_categories&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
         &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
-        RNN's constructor.
+        RNN&apos;s constructor.
         Args:
             n_categories: int The number of categories.
         &quot;&quot;&quot;&lt;/span&gt;
@@ -334,7 +334,7 @@ gradient values, there will be smaller weight updates and the RNN won’t learn 
 &lt;p&gt;&lt;img src=&quot;/assets/img/posts/gru4rec/rnn.png&quot; alt=&quot;rnn&quot; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;Gated Recurrent Units help RNN’s to mitigate the previous issue. They do so by applying different ways of calculating the hidden state, by deciding when to calculate it and how to update it. They implement a reset gate(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r(t)&lt;/code&gt;), an update gate(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;z(t)&lt;/code&gt;) and a new memory container(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;h'(t)&lt;/code&gt;).&lt;/li&gt;
+  &lt;li&gt;Gated Recurrent Units help RNN’s to mitigate the previous issue. They do so by applying different ways of calculating the hidden state, by deciding when to calculate it and how to update it. They implement a reset gate(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;r(t)&lt;/code&gt;), an update gate(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;z(t)&lt;/code&gt;) and a new memory container(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;h&apos;(t)&lt;/code&gt;).&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/img/posts/gru4rec/gru.png&quot; alt=&quot;gru&quot; /&gt;&lt;/p&gt;
@@ -362,7 +362,7 @@ use-case.&lt;/p&gt;
         &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vec_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding_dim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
         &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gru&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GRU&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rnn_units&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return_sequences&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;return_state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
         &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dropout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Dropout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dropout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dense&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vec_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'softmax'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dense&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vec_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;softmax&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;states&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return_state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;training&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inputs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;training&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;training&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -384,7 +384,7 @@ use-case.&lt;/p&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SparseCategoricalCrossentropy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_logits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'adam'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;metrics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'accuracy'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;adam&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;metrics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;accuracy&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -495,4 +495,315 @@ We can then make use of &lt;code class=&quot;language-plaintext highlighter-roug
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/1_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/2_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/3_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
-&lt;img src=&quot;/assets/img/posts/vae-product-recommendations/4_neighbor.png&quot; alt=&quot;gru&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="recommendations" /><category term="machine-learning" /><category term="computer-vision" /><summary type="html">In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;img src=&quot;/assets/img/posts/vae-product-recommendations/4_neighbor.png&quot; alt=&quot;gru&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="recommendations" /><category term="machine-learning" /><category term="computer-vision" /><summary type="html">In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">What really is vectorization and how does it work?</title><link href="https://andre-b-fernandes.github.io/what-is-vectorization/" rel="alternate" type="text/html" title="What really is vectorization and how does it work?" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/vectorization</id><content type="html" xml:base="https://andre-b-fernandes.github.io/what-is-vectorization/">&lt;p&gt;In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with 
+&lt;strong&gt;vectorization&lt;/strong&gt;. We hear a lot about it with the way typicall machine learning libraries work such as &lt;strong&gt;numpy&lt;/strong&gt; or &lt;strong&gt;pandas&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;But what really is vectorization and how does it work in practice?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SIMD&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;One of the ways to perform vectorization is when your program is compiled to vectorized CPU instructions. This type of &lt;em&gt;parallel processing&lt;/em&gt; is called &lt;strong&gt;Single Instruction Multiple Data&lt;/strong&gt; (SIMD) under &lt;strong&gt;Flynn’s Taxonomy&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;But what are vectorized CPU instructions?
+Modern CPU’s support multiple instruction sets extensions which implement SIMD.&lt;/p&gt;
+
+&lt;p&gt;Examples of these sets are &lt;strong&gt;MMX&lt;/strong&gt;, &lt;strong&gt;SSE&lt;/strong&gt;, &lt;strong&gt;AVX&lt;/strong&gt;, etc… and are available on modern Intel and AMD CPU’s. These instruction sets were developed and improved along the years of microprocessure architecture development.&lt;/p&gt;
+
+&lt;p&gt;For an historical reference, AVX was extended into AVX2 for the first time in 2013 when Intel launched the Haswell microprocessor 
+architecture.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Comparison between non-vectorization and vectorization behaviour&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A normal machine cycle will include the &lt;strong&gt;Fetching Stage&lt;/strong&gt; where the CPU will fetch the instruction and data from the registers, it will then decode the instructions in the &lt;strong&gt;Decoder Stage&lt;/strong&gt; and emit the relevant signals to the ALU in the &lt;strong&gt;Execution Stage&lt;/strong&gt;.
+An &lt;strong&gt;ALU&lt;/strong&gt;(Arithmetical Logic Unit) is a digital circuit which is responsible for arithmetical operations on operands.&lt;/p&gt;
+
+&lt;p&gt;In the figure below the Decoder Stage is omitted.
+Normal registers have a fixed bit length dimension where data is stored, and if an operation takes two operands 
+an ALU will perform an operation on these 2 operands during the Execution Stage.&lt;/p&gt;
+
+&lt;p&gt;In a vectorized architecture, vectors are stored in &lt;strong&gt;Vector Registers&lt;/strong&gt; which behave similarly to &lt;strong&gt;Scalar Registers&lt;/strong&gt;
+and are divided into a fixed number of chunks supporting more than one variable.&lt;/p&gt;
+
+&lt;p&gt;E.g if we had a scalar register of 128 bits, a similar vector register could store 4 elements of 32 bits.&lt;/p&gt;
+
+&lt;p&gt;Loading data from a register will load multiple elements at a time, in one single machine cycle. Modern CPU’s support multiple ALU’s and so we can perform multiple independent operations in parallel.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/vectorization/Vectorization.png&quot; alt=&quot;vectorization&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Hinting the compiler&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now the question is how can we hint the compiler to compile our code with a vectorized instruction set.
+We will explore 2 options:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Vector Intrisics&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I made a proof of concept &lt;a href=&quot;https://github.com/andre-b-fernandes/vectorization&quot;&gt;Github Repository&lt;/a&gt; which you can explore.&lt;/p&gt;
+
+&lt;p&gt;Lets take as an example the task of multiplying two square matrices.
+Each matrix is a floating pointer flat array and the matrix is stored in row-major.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matrixMultiplication&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The code above implements the standard matrix multiplication algorithm (without any improvements) whose
+time complexity is &lt;strong&gt;O(n&lt;sup&gt;3&lt;/sup&gt;)&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Vector Instrisics&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Vector intrisics feel like regular functions you call in normal C++ source code, but they are &lt;strong&gt;compiler intrisic functions&lt;/strong&gt; meaning that they are implented directly in the compilers.
+They are useful since they help hint the compiler to use vectorized instructions, since the compiler has 
+a intimate knowledge of the function and can integrate it and optimize it for better usage.&lt;/p&gt;
+
+&lt;p&gt;The vector intrisics you’ll see below either finish with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt;. That is because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; stands for &lt;strong&gt;scalar instructions&lt;/strong&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt; stands for &lt;strong&gt;packed instructions&lt;/strong&gt;.
+Packed operations operate on &lt;strong&gt;a vector in parallel&lt;/strong&gt; with a single instruction while scalar instructions
+operate only &lt;strong&gt;one element&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Some of the operations below need to be performed on &lt;strong&gt;32 byte aligned memory addresses&lt;/strong&gt; (or 16 in case of 4 packed operations) which means that the memory address needs to be divisable by 32.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;_mm_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the code above we used 6 intrisics:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_set_zero_ps&lt;/code&gt;: Create a vector of 4 zeros.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 4 times to the array.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_load_ps&lt;/code&gt;: Load 4 consequentive floating type numbers from a 16 byte aligned memory address.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m128&lt;/code&gt; types which is a packed vector type holding
+4 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;_mm256_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Similarly, in the code above we used 6 intrisics:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_setzero_ps&lt;/code&gt;: Create a vector of 8 zeros.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 8 times to the array.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_load_ps&lt;/code&gt;: Load 8 consequentive floating type numbers from a 32 byte aligned memory address.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m256&lt;/code&gt; types which is a packed vector type holding
+8 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
+
+&lt;p&gt;For more vector intrisics check &lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=4294,6118,6121,153,151,153,193,101,153,112,101,614&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Assembly code comparison&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;We can debug the assembly file result of the compilation process with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -S ...&lt;/code&gt; before assembling and linking it.&lt;/p&gt;
+
+&lt;p&gt;For a simple matrix multiplication let’s take a look at part of the assembly code generated by the compiler.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z20matrixMultiplicationPfS_S_:
+(...)
+.L8:
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm1
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-4(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-24(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm2
+	movl	-4(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-32(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm0
+	mulss	%xmm2, %xmm0
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	addss	%xmm1, %xmm0
+	movss	%xmm0, (%rax)
+	addl	$1, -4(%rbp)
+(...)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z31vectorizedMatrixMultiplication4PfS_S_:
+(...)
+.L19:
+	movl	-180(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-172(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-200(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -160(%rbp)
+	movq	-160(%rbp), %rax
+	vbroadcastss	(%rax), %xmm0
+	nop
+	vmovaps	%xmm0, -128(%rbp)
+	movl	-172(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-176(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-208(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -168(%rbp)
+	movq	-168(%rbp), %rax
+	vmovaps	(%rax), %xmm0
+	vmovaps	%xmm0, -112(%rbp)
+	vmovaps	-128(%rbp), %xmm0
+	vmovaps	%xmm0, -48(%rbp)
+	vmovaps	-112(%rbp), %xmm0
+	vmovaps	%xmm0, -32(%rbp)
+	vmovaps	-48(%rbp), %xmm0
+	vmulps	-32(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -96(%rbp)
+	vmovaps	-144(%rbp), %xmm0
+	vmovaps	%xmm0, -80(%rbp)
+	vmovaps	-96(%rbp), %xmm0
+	vmovaps	%xmm0, -64(%rbp)
+	vmovaps	-80(%rbp), %xmm0
+	vaddps	-64(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -144(%rbp)
+	addl	$1, -172(%rbp)
+(...)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These figures above show part of the instruction set used in the assembly result of our c++ code.
+You can notice the difference in the used instruction set from the traditional matrix factorization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z20matrixMultiplicationPfS_S_&lt;/code&gt;)
+to the vectorized one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z31vectorizedMatrixMultiplication4PfS_S_&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Two very quick examples are the usage of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;imull&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;addl&lt;/code&gt;
+in contrast with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vmulps&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vaddps&lt;/code&gt; respectively.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Auto-Vectorization&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Auto-vectorization essentially means that we let the compiler optimize our calculation loops by itself, without hinting, which will work for traditional cases.&lt;/p&gt;
+
+&lt;p&gt;Take a loot at the following command: 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -ftree-vectorize -mavx ...&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We’re only aiming for vectorization, so we will omit level 3 optimization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-O3&lt;/code&gt;) and that’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ftree-vectorize&lt;/code&gt; compiler flag stands for.&lt;/p&gt;
+
+&lt;p&gt;We also need to target a valid SIMD instruction set extension so that
+it can be used by the compiler. That’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-mavx&lt;/code&gt; flag does.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Execution time comparison&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The results below were done for a squared matrix of 1600 by 1600.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Function&lt;/th&gt;
+      &lt;th&gt;Average Time&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Simple Matrix Factorization&lt;/td&gt;
+      &lt;td&gt;14933 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Auto-Vectorization&lt;/td&gt;
+      &lt;td&gt;11962 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vectorized Matrix Multiplication (4)&lt;/td&gt;
+      &lt;td&gt;9817 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vectorized Matrix Multiplication (8)&lt;/td&gt;
+      &lt;td&gt;6143 ms&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.linuxjournal.com/content/introduction-gcc-compiler-intrinsics-vector-processing&quot;&gt;Linux journal introduction to intrisics&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.jsums.edu/robotics/files/2016/12/FECS17_Proceedings-FEC3555.pdf&quot;&gt;CPU vectorization  Jackson State University papper&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://stackoverflow.blog/2020/07/08/improving-performance-with-simd-intrinsics-in-three-use-cases/&quot;&gt;Stack Overflow blog post&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.cs.uic.edu/~ajayk/c566/VectorProcessors.pdf&quot;&gt;University of Illinois deck&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;</content><author><name></name></author><category term="cpp" /><category term="vectorization" /><summary type="html">In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vectorization.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vectorization.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
