@@ -33,12 +33,12 @@ prof-exp:
     value: Machine Learning Engineer
     range: 2018-2021
     icon: bi-shop
-    description: Started the recommendations Engine building NLP pipelines on AWS Sagemaker and generating word embeddings with Word2Vec. Also deployed an online recommendations Engine with GRU4REC with automatic model reloading and deployment on each scheduled train.
+    description: Started the recommendations Engine building NLP pipelines on AWS Sagemaker and generating word embeddings with Word2Vec written in Tensorflow. Also deployed an online recommendations Engine with GRU4REC with automatic model reloading and deployment on each scheduled train.
   - label: Farfetch
     value: Machine Learning Engineer
     range: 2021
     icon: bi-bag-check-fill
-    description: Worked in the Recommendations Engine, dealing with ETL pipelines on Azure Databricks which would generate fashion outfits to show the user. Also worked with live serving a personalised outfit recommender with Gunicorn, Docker, NGINX and Kubernetes.
+    description: Worked in the Recommendations cluster, dealing with ETL pipelines on Azure Databricks which would generate fashion outfits via a Tensorflow model. Also worked with live serving a personalised outfit recommender with Gunicorn, Docker, NGINX and Kubernetes. Besides this, also dealt with large matrix factorization machines and serving dot product recommendations in live environments.
 tech-skills:
   - Python
   - C++
@@ -69,6 +69,8 @@ extra-certifications:
     range: 2021
   - label: Spark and Python for Big Data with Pyspark on Udemy by Jose Portilla
     range: 2021
+  - label: Complete Tensorflow 2 and Keras Deep Learning Bootcamp
+    range: 2022
 interests:
   - General Tech
   - Distributed Systems
