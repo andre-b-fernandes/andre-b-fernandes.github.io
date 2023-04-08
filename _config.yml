@@ -30,6 +30,7 @@ profile_path: assets/img/profile.jpg
 theme: minima
 plugins:
   - jekyll-feed
+  - jemoji
 
 sass:
   sass_dir: assets/css

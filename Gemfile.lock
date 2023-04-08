@@ -259,6 +259,7 @@ DEPENDENCIES
   github-pages
   jekyll
   jekyll-feed
+  jemoji
   minima
   tzinfo (~> 1.2)
   tzinfo-data
