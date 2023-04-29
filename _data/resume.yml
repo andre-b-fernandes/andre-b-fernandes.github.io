@@ -6,7 +6,7 @@ personal-information:
     value: <a href="https://andre-b-fernandes.github.io"> https://andre-b-fernandes.github.io </a>
     icon: bi-globe
   - label: Nationality
-    value: Portuguese
+    value: Portuguese (C1 English level)
     icon: bi-house
   - label: Email
     value: fernandoandre49@gmail.com
@@ -40,16 +40,14 @@ prof-exp:
     icon: bi-bag-check-fill
     description: Worked in the Recommendations cluster, dealing with ETL pipelines on Azure Databricks which would generate fashion outfits via a Tensorflow model. Also worked with live serving a personalised outfit recommender with Gunicorn, Docker, NGINX and Kubernetes. Besides this, also dealt with large matrix factorization machines and serving dot product recommendations in live environments.
 tech-skills:
-  - Python
+  - Python (Flask/Gunicorn)
   - C++
   - Tensorflow
   - Pyspark
   - Numpy
-  - Matplotlib
   - Pandas
   - Git
   - Docker
-  - AWS Cloud Services
   - Kubernetes
 social-skills:
   - Public Speaking
