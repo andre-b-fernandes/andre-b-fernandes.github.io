@@ -24,13 +24,24 @@ I used **Python** and some of its libraries such as **Numpy**, **Tensorflow**, a
 
 ![Jumpseller](/assets/img/prof-exp/jumpseller.jpg)
 
-#### (2021 - Now) Farfetch
+#### (2021 - 2023) Farfetch
 
-I've started working at [**Farfetch**](https://www.farfetch.com) in September 2021, and I am now part of Farfetch's recommendations cluster working as a machine learning engineer in Porto.
-I'm working together with data scientists and machine learning engineers as well as product
+I've started working at [**Farfetch**](https://www.farfetch.com) in September 2021, and I was a part of Farfetch's recommendations cluster working as a machine learning engineer in Porto.
+I worked together with data scientists and machine learning engineers as well as product
 managers in a professional environment.
 I've started using other technologies such as **PySpark**, **Azure Pipelines** and **Databricks** for an integrated ML and data platform.
+Together we built products using **Approximate Nearest Neighbour Search** and used the **Resnet** and **LSTM** architectures to build an outfit recommendations generator. Lastly, we were able to powere this recommender with the **Vespa.ai vector database**.
 
 ![Farfetch](/assets/img/prof-exp/farfetch.png)
 
 
+
+#### (2023-Now) Revolut
+
+
+Currently working in the fincrime department, in a fast-paced and quick-changing environemnts building models
+to detect fraudulent CNP transactions. Using a lot of data analysis tools, I improved my usage of **pandas** and **plotly.express** for data manipulation
+and data visualization.
+For OLAP queries I became fluent with **Trino** and am using **SQL** on a daily basis, as well as acquired a lot of **Regression Trees** and **Gradient Boosting Mode** knowledge.
+
+![Revolut](/assets/img/prof-exp/revolut.png)
