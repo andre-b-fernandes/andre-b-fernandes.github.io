@@ -1,7 +1,4 @@
 personal-information:
-  - label: Name
-    value: Fernando André Fernandes
-    icon: bi-person-circle
   - label: Birth date
     value: 04-09-1997
     icon: bi-calendar
@@ -36,12 +33,12 @@ prof-exp:
     value: Machine Learning Engineer
     range: 2018-2021
     icon: bi-shop
-    description: Created the recommendations Engine - NLP pipelines on AWS Sagemaker - Word embeddings with Word2Vec - Tensorflow. Online session-based GRU4REC with MlOps setup.
+    description: Created the recommendations Engine - NLP pipelines on AWS Sagemaker/Glue - Word embeddings with Word2Vec - Tensorflow. Online session-based GRU4REC with MlOps setup.
   - label: Farfetch
     value: Machine Learning Engineer
     range: 2021
     icon: bi-bag-check-fill
-    description: Recommendations cluster - ETL pipelines on Azure Databricks - Generation of personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, NGINX and Kubernetes and batch processing via SPark. Large matrix factorization machines and serving dot product recommendations.
+    description: Recommendations cluster - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, NGINX and Kubernetes - Batch processing via SPark. Matrix factorization + serving dot product recommendations.
   - label: Revolut
     value: Data Scientist
     range: 2023
@@ -49,15 +46,10 @@ prof-exp:
     description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees.
 tech-skills:
   - Python (Flask/Gunicorn)
-  - Tensorflow
-  - Pyspark
-  - Numpy
-  - Pandas
+  - Data-science libraries Tensorflow, Numpy, Pandas, etc...
   - Git
-  - Docker
-  - Kubernetes
-  - Relational DBs (PostgreSQL/MySQL) and Non Relational DBS (MongoDB and AWS DynamoDB)
-  - Vector databases (Vespa.ai)
+  - Docker + Kubernetes
+  - Relational (PostgreSQL/MySQL) + Non Relational (MongoDB/DynamoDB) + Vector (Vespa.ai) DBs
 social-skills:
   - Public Speaking
   - Helping others
