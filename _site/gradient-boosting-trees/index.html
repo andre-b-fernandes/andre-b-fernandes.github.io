@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Gradient boosting trees | André Fernandes</title>
+<meta name="generator" content="Jekyll v3.9.2" />
+<meta property="og:title" content="Gradient boosting trees" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post we will analyse how gradient boosting regression trees work under the hood, and go over some code samples taken from my Github repo." />
+<meta property="og:description" content="In this post we will analyse how gradient boosting regression trees work under the hood, and go over some code samples taken from my Github repo." />
+<link rel="canonical" href="https://andre-b-fernandes.github.io/gradient-boosting-trees/" />
+<meta property="og:url" content="https://andre-b-fernandes.github.io/gradient-boosting-trees/" />
+<meta property="og:site_name" content="André Fernandes" />
+<meta property="og:image" content="https://andre-b-fernandes.github.io/gradient-boosting-trees.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-26T00:00:00+01:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://andre-b-fernandes.github.io/gradient-boosting-trees.png" />
+<meta property="twitter:title" content="Gradient boosting trees" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-06-26T00:00:00+01:00","datePublished":"2021-06-26T00:00:00+01:00","description":"In this post we will analyse how gradient boosting regression trees work under the hood, and go over some code samples taken from my Github repo.","headline":"Gradient boosting trees","image":"https://andre-b-fernandes.github.io/gradient-boosting-trees.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://andre-b-fernandes.github.io/gradient-boosting-trees/"},"url":"https://andre-b-fernandes.github.io/gradient-boosting-trees/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://andre-b-fernandes.github.io/feed.xml" title="André Fernandes" /></head>
+<body><script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+<script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+<script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+<link rel="stylesheet" href="/assets/css/main.css">
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="row">
+  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+    <div class="row">
+      <div class="col">
+        <div class="card border-0 navbar-bg">
+  <h4 class="card-title text-center"> André Fernandes</h4>
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
+  </a>
+  <div class="card-body">
+    <p class="card-text font-weight-bold"> Machine Learning Engineer</p>
+    <p class="card-text"> FEUP, UPORTO, Portugal</p>
+    <p class="card-text"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
+    <p class="card-text"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    
+      <p class="card-text"></p>
+        <a id="about" class="navbar-link" href="/about" role="tab"> About me </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="academics" class="navbar-link" href="/academics" role="tab"> Academics </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="prof-exp" class="navbar-link" href="/prof-exp" role="tab"> Professional Experience </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="technologies" class="navbar-link" href="/technologies" role="tab"> Technologies </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="posts" class="navbar-link" href="/posts" role="tab"> Posts </a>
+      </p>
+    
+      <p class="card-text"></p>
+        <a id="resume" class="navbar-link" href="/resume" role="tab"> Resume </a>
+      </p>
+    
+  </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-9 content-bg">
+    <div class="row">
+      <div class="col"><h1 class="page-heading mt-3 mb-4">Gradient boosting trees</h1><p>In this post we will analyse how gradient boosting regression trees work under the hood,
+and go over some code samples taken from my Github <a href="https://github.com/andre-b-fernandes/gradient-boosting-trees">repo</a>.</p>
+
+<p><strong>Regression trees</strong></p>
+
+<ul>
+  <li>
+    <p><strong>Regression trees</strong> are an application of decision trees used in machine learning for applying regression tasks on a series of data points. They work similarly to standard classification trees but instead of using categorical data, they use continuous labels. They can also be interpreted as a list of hierarhical if-else statements applied on data features.</p>
+  </li>
+  <li>They are buil in a binary fashion where a node can have at-most 2 child nodes (or leaves).</li>
+  <li>Tree balance depends on implementation stopping criteria for building trees. Few ideas below:
+    <ul>
+      <li>If stopping criteria defines a maximum tree level to be reached, trees will grow left and right side nodes until that maximum level is reached.</li>
+      <li>You can also establish a maximum number of nodes where if a maximum number of nodes is reached, trees will stop growing.</li>
+      <li>It is also possible, to grow trees by number of leaves and greedily explore nodes which decrease error the most.</li>
+      <li>I.e public packages like <a href="https://lightgbm.readthedocs.io/en/latest/Features.html#leaf-wise-best-first-tree-growth">lightgbm</a> can grow trees level-wise or leaf-wise depending on the user choice.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The heuristic is the following:</p>
+
+<ol>
+  <li>Create root node.</li>
+  <li>Check for stopping criteria -if not reached continue, else exit.</li>
+  <li>Find best split feature.</li>
+  <li>Make recursive call, depending on implementation.</li>
+</ol>
+
+<p>Notice the implementation at the <a href="https://github.com/andre-b-fernandes/gradient-boosting-trees/blob/master/gradient_boosting_trees/regression/builder.py">abstract node builder</a> class
+and the <a href="https://github.com/andre-b-fernandes/gradient-boosting-trees/blob/master/gradient_boosting_trees/regression/cart/builder.py">tree-level node builder</a> subclass.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">should_stop</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">):</span>
+            <span class="n">node_id</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_node_count</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_node_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">Node</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_id</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">labels</span><span class="p">.</span><span class="n">mean</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">recursive_call</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">def</span> <span class="nf">recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
+        <span class="s">"""
+        The function recursive call on building the tree level-wise. Overriding the
+        parent class and finding the best feature split greadily.
+
+        Arguments:
+            points: numpy array The current level data points across all features.
+            labels: numpy array The labels for the respective points.
+        """</span>
+        <span class="n">feature_split</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">find_best_split</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">feature_idx</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">feature_split</span>
+        <span class="n">lhs_points</span><span class="p">,</span> <span class="n">lhs_labels</span> <span class="o">=</span> <span class="n">lhs</span>
+        <span class="n">rhs_points</span><span class="p">,</span> <span class="n">rhs_labels</span> <span class="o">=</span> <span class="n">rhs</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">_current_level</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">lhs_points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lhs_labels</span><span class="p">)</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">build</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">rhs_points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">rhs_labels</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Node</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_node_count</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="p">(</span><span class="n">feature_idx</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">),</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold_value</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We start by checking if we <code class="language-plaintext highlighter-rouge">should_stop</code> and return a new <code class="language-plaintext highlighter-rouge">Node</code> object when we meet the criteria.
+If we do not, we find the best split feature (more on that later) and check for the left-hand side 
+and right-hand side points to continue splitting.
+Then we make 2 recursive calls, one for the left-hand side child and right-hand side child increasing the 
+level count <code class="language-plaintext highlighter-rouge">self._current_level += 1</code>.
+The process is repeated until the stopping criteria is met.</p>
+
+<p>In order to find the best <a href="https://github.com/andre-b-fernandes/gradient-boosting-trees/blob/master/gradient_boosting_trees/regression/cart/split.py">split</a> we need to check 2 things:</p>
+
+<ol>
+  <li>How do we measure what is <em>“best”</em> ?</li>
+  <li>For each feature what is the best threshold for splitting.</li>
+  <li>What is the best feature for splitting.</li>
+</ol>
+
+<p>In the linked implementation we order the continuous points in order to find the best pair of points (mean)
+which minimizes the total loss computed by summing:</p>
+
+<ol>
+  <li>Left-hand-side loss - Mean of the labels of the left-hand-side of the assessed pair threshold</li>
+  <li>Right-hand-side loss - Mean of the labels of the right-hand-side of the assessed pair threshold</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># split area
+</span>    <span class="n">lhs</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:</span><span class="n">candidate_treshold_idx</span><span class="p">]</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">candidate_treshold_idx</span><span class="p">:]</span>
+
+    <span class="c1"># split predictions
+</span>    <span class="n">pred_lhs</span> <span class="o">=</span> <span class="n">lhs</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">pred_rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="c1"># mse split loss
+</span>    <span class="n">lhs_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">lhs</span> <span class="o">-</span> <span class="n">pred_lhs</span><span class="p">).</span><span class="nb">sum</span><span class="p">()</span>
+    <span class="n">rhs_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">rhs</span> <span class="o">-</span> <span class="n">pred_rhs</span><span class="p">).</span><span class="nb">sum</span><span class="p">()</span>
+    <span class="n">total_candidate_loss</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">abs</span><span class="p">(</span><span class="n">lhs_loss</span> <span class="o">+</span> <span class="n">rhs_loss</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We then compute this for all features and find the best split greedily. This is known as the <strong>CART</strong> algorithm.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">feature_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">):</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span> <span class="n">feature_idx</span><span class="p">]</span>
+        <span class="n">feature_sorted_idx</span> <span class="o">=</span> <span class="n">sorted_idx</span><span class="p">[:,</span> <span class="n">feature_idx</span><span class="p">]</span>
+        <span class="c1"># use sorted feature to find the best split
+</span>        <span class="n">candidate_idx</span><span class="p">,</span> <span class="n">candidate_value</span><span class="p">,</span> <span class="n">candidate_ft_loss</span> <span class="o">=</span> <span class="n">find_best_split_feature</span><span class="p">(</span>
+            <span class="n">feature</span><span class="o">=</span><span class="n">feature</span><span class="p">[</span><span class="n">feature_sorted_idx</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">feature_sorted_idx</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">min_feature_loss</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">candidate_ft_loss</span> <span class="o">&lt;</span> <span class="n">min_feature_loss</span><span class="p">:</span>
+            <span class="n">min_feature_loss</span> <span class="o">=</span> <span class="n">candidate_ft_loss</span>
+            <span class="n">best_loss_feature</span> <span class="o">=</span> <span class="n">feature_idx</span>
+            <span class="n">threshold_idx</span> <span class="o">=</span> <span class="n">candidate_idx</span>
+            <span class="n">threshold_value</span> <span class="o">=</span> <span class="n">candidate_value</span>
+</code></pre></div></div>
+
+<p>We then return the best split:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># return feature spit, left and right split
+</span><span class="n">feature_split</span> <span class="o">=</span> <span class="n">FeatureSplit</span><span class="p">(</span><span class="n">best_loss_feature</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="n">min_feature_loss</span><span class="p">)</span>
+<span class="n">lhs</span> <span class="o">=</span> <span class="n">HandSide</span><span class="p">(</span><span class="n">lhs_points</span><span class="p">,</span> <span class="n">lhs_labels</span><span class="p">)</span>
+<span class="n">rhs</span> <span class="o">=</span> <span class="n">HandSide</span><span class="p">(</span><span class="n">rhs_points</span><span class="p">,</span> <span class="n">rhs_labels</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>As an example:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="n">px</span>
+
+
+<span class="kn">from</span> <span class="nn">gradient_boosting_trees.model</span> <span class="kn">import</span> <span class="n">GBRegressionTrees</span><span class="p">,</span> <span class="n">GBParams</span>
+<span class="kn">from</span> <span class="nn">gradient_boosting_trees.regression.tree</span> <span class="kn">import</span> <span class="n">RegressionTree</span>
+<span class="kn">from</span> <span class="nn">gradient_boosting_trees.regression.cart.builder</span> <span class="kn">import</span> <span class="n">TreeLevelNodeBuilder</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">X</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">"X"</span><span class="p">,</span> <span class="s">"Y"</span><span class="p">])</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">TreeLevelNodeBuilder</span><span class="p">(</span><span class="n">min_moints</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">RegressionTree</span><span class="p">(</span><span class="n">node_builder</span><span class="o">=</span><span class="n">builder</span><span class="p">)</span>
+
+<span class="n">builder_2</span> <span class="o">=</span> <span class="n">TreeLevelNodeBuilder</span><span class="p">(</span><span class="n">min_moints</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">tree_2</span> <span class="o">=</span> <span class="n">RegressionTree</span><span class="p">(</span><span class="n">node_builder</span><span class="o">=</span><span class="n">builder_2</span><span class="p">)</span>
+
+<span class="n">tree</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">tree_2</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">Y</span><span class="p">)</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">predictions2</span> <span class="o">=</span> <span class="n">tree_2</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">data</span><span class="p">[</span><span class="s">"predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span>
+<span class="n">data</span><span class="p">[</span><span class="s">"predictions2"</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions2</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/posts/gradient-boosting-trees/reg_tree.png" alt="tree" /></p>
+
+<p><strong>Gradient Boosting</strong></p>
+
+<p>Gradient boosting is an <strong>ensembe technique</strong> which involves a list of <em>“weak-learners”</em> whose composed training
+forms a <em>“stronger”</em> model.
+In training, at each step a new <em>weak</em> model trained on the <strong>gradient</strong> of the error of the current strong model and then added to the least of weak learners.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Mi+1 = Strong model at ith iteration + 1
+Mi = Strong model at ith iteration
+mi = Weak model at ith iteration
+
+Mi+1 = Mi - mi
+</code></pre></div></div>
+
+<p>In our <a href="https://github.com/andre-b-fernandes/gradient-boosting-trees/blob/master/gradient_boosting_trees/model.py">implementation</a> in the <code class="language-plaintext highlighter-rouge">GBRegressionTree</code> class we zero-initialize the strong model <code class="language-plaintext highlighter-rouge">strong_predictions</code> and create an empty list with the weak models which will be <code class="language-plaintext highlighter-rouge">RegressionTree</code> objects.</p>
+
+<p>We then compute the gradient of the <strong>squared error</strong> with regards to the current strong predictions and labels
+and fit the current regression tree of the current iteration to that gradient.
+After that, we get the predicitons of the tree and iteratively modify the current strong predictions
+with the weak predictions we get from the weak model multiplied by a shrinkage parameter.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">strong_predictions</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="bp">self</span><span class="p">.</span><span class="n">_weak_models</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">)):</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">squared_error</span><span class="p">(</span><span class="n">raw_predictions</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">learning_error</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+    <span class="n">gradient</span><span class="p">,</span> <span class="n">hessian</span> <span class="o">=</span> <span class="n">squared_error_gradient_hessian</span><span class="p">(</span><span class="n">raw_predictions</span><span class="o">=</span><span class="n">strong_predictions</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="p">.</span><span class="n">_builder</span><span class="p">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">RegressionTree</span><span class="p">(</span><span class="n">node_builder</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_builder</span><span class="p">)</span>
+    <span class="n">tree</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">gradient</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">_weak_models</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+
+    <span class="n">weak_predictions</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">strong_predictions</span> <span class="o">-=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_params</span><span class="p">.</span><span class="n">shrinkage</span> <span class="o">*</span> <span class="n">weak_predictions</span> <span class="o">/</span> <span class="n">hessian</span>
+</code></pre></div></div>
+
+<p>Notice as well we also compute an hessian, being the <strong>second-order derivative</strong>, of the error (constant array in our-case), which is referred as the <strong>Newton-trick</strong> or <a href="https://en.wikipedia.org/wiki/Newton%27s_method">Newton-raphson method</a> application in gradient boosting (In this case, second-order approximation is really not needed since we can get by with just modifying the shrinkage parameter).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">params</span> <span class="o">=</span> <span class="n">GBParams</span><span class="p">(</span><span class="n">shrinkage</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">builder</span> <span class="o">=</span> <span class="n">TreeLevelNodeBuilder</span><span class="p">(</span><span class="n">min_moints</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">gradient_boosting</span>  <span class="o">=</span> <span class="n">GBRegressionTrees</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">node_builder</span><span class="o">=</span><span class="n">builder</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">gradient_boosting</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">n_iterations</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">gb_predictions</span> <span class="o">=</span> <span class="n">gradient_boosting</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">TreeLevelNodeBuilder</span><span class="p">(</span><span class="n">min_moints</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">RegressionTree</span><span class="p">(</span><span class="n">node_builder</span><span class="o">=</span><span class="n">builder</span><span class="p">)</span>
+<span class="n">tree</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">Y</span><span class="p">)</span>
+
+<span class="n">tree_preds</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="p">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">data</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">gb_predictions</span><span class="p">,</span> <span class="n">tree_preds</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">"True Y"</span><span class="p">,</span> <span class="s">"Gradient Boosting"</span><span class="p">,</span> <span class="s">"Regression Tree"</span><span class="p">])</span>
+<span class="n">sns</span><span class="p">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/posts/gradient-boosting-trees/gb.png" alt="gb" /></p>
+
+<p>Notice how the predictions of a simple regression tree are done by threshold evaluation of the provided X values which could be simply defined as if-else statements and the prediction line resembles a step-function.
+In contrast, the gradient boosting predictions offer a smoother line, made of the contributions of each one of the weaker regression trees.</p>
+
+      </div>
+    </div> 
+    <div class="row content-bg" style="height: 85%;">
+    </div>
+  </div> 
+</div>
+
+      </div>
+    </main><!-- <footer class="site-footer h-card bg-light">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="row">
+      <div class="col-lg-3"><a class="u-email" href="mailto:fernandoandre49@gmail.com">fernandoandre49@gmail.com</a></div>
+      <div class="col-lg-3"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></div>
+      <div class="col-lg-3"><a href="https://www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></div>
+    <div>
+  </div>
+</footer> -->
+</body>
+
+</html>

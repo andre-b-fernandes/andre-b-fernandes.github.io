@@ -38,12 +38,12 @@ prof-exp:
     value: Machine Learning Engineer
     range: 2021
     icon: bi-bag-check-fill
-    description: Recommendations cluster - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, NGINX and Kubernetes - Batch processing via SPark. Matrix factorization + serving dot product recommendations.
+    description: Recommendations cluster - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, MLFlow and Kubernetes - Batch processing via Spark. Matrix factorization + serving dot product recommendations.
   - label: Revolut
     value: Data Scientist
     range: 2023
     icon: bi-bank
-    description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees.
+    description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees via lightgbm.
 tech-skills:
   - Python (Flask/Gunicorn)
   - Data-science libraries Tensorflow, Numpy, Pandas, etc...
