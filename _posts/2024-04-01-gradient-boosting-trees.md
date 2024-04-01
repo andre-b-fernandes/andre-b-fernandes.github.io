@@ -20,7 +20,7 @@ and go over some code samples taken from my Github [repo](https://github.com/and
   - If stopping criteria defines a maximum tree level to be reached, trees will grow left and right side nodes until that maximum level is reached.
   - You can also establish a maximum number of nodes where if a maximum number of nodes is reached, trees will stop growing.
   - It is also possible, to grow trees by number of leaves and greedily explore nodes which decrease error the most.
-  - I.e public packages like [lightgbm](https://lightgbm.readthedocs.io/en/latest/Features.html#leaf-wise-best-first-tree-growth) can grow trees level-wise or leaf-wise depending on the user choice.
+  - I.e The public package [lightgbm](https://lightgbm.readthedocs.io/en/latest/Features.html#leaf-wise-best-first-tree-growth) grows trees leaf-wise instead of level-wise.
 
 The heuristic is the following:
 
