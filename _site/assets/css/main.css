@@ -2289,9 +2289,24 @@ a.text-dark:hover, a.text-dark:focus { color: #1d2124 !important; }
   .table { border-collapse: collapse !important; }
   .table td, .table th { background-color: #fff !important; }
   .table-bordered th, .table-bordered td { border: 1px solid #ddd !important; } }
-.navbar-bg { background-color: #292525; }
+/* Code Editor Styling */
+.code-editor { background-color: #2b2b2b; /* Dark background, similar to VS Code */ color: #f8f8f2; /* Light text color */ font-family: 'Courier New', Courier, monospace; /* Monospaced font */ padding: 20px; border-radius: 5px; overflow: auto; height: 100%; /* Set height to 80% of the viewport */ }
 
-.card { color: darkgrey; }
+.code-editor img { /* Your styles here */ max-width: 100%; max-height: 100%; }
+
+.vscode-sidebar .nav-link { color: #d4d4d4; /* Text color */ padding: 10px 20px; /* Padding around items */ display: flex; align-items: center; /* Center icons and text vertically */ text-decoration: none; /* Remove underline */ font-size: 14px; transition: color 0.3s, background-color 0.3s; /* Smooth transition */ }
+
+.vscode-sidebar { background-color: #0d003f; /* Dark background color */ color: #d4d4d4; /* Light text color */ height: 100vh; /* Full height of the viewport */ width: 100%; /* Full width of the sidebar column */ padding-top: 20px; /* Space at the top */ }
+
+.vscode-sidebar .nav-link:hover { background-color: #333333; /* Lighter background on hover */ color: #1e90ff; /* Brighter blue text on hover */ }
+
+.highlight { background-color: #f8f8f2; /* Light text color */ font-family: 'Courier New', Courier, monospace; /* Monospaced font */ padding: 20px; border-radius: 5px; overflow: auto; height: 100%; /* Set height to 80% of the viewport */ }
+
+.container-fluid { height: 100%; }
+
+.navbar-bg { background-color: #0d003f; }
+
+.card { color: darkgrey; padding-top: 20px; }
 
 .card-img-top { width: 50%; transform: translateX(50%); border-radius: 50%; }
 
@@ -2301,9 +2316,8 @@ a.text-dark:hover, a.text-dark:focus { color: #1d2124 !important; }
 
 div.wrapper { max-width: 100%; }
 
-.page-content { padding: 1; }
+html, body, main { height: 100%; }
 
-body { font-size: 18px; background-color: #292525; }
+main div.card { height: 100%; }
 
-@media (min-width: 768px) { .zoom { transition: transform .2s; /* Animation */ }
-  .zoom:hover { transform: scale(2); /* (150% zoom)*/ z-index: 9999; top: 50%; } }
+body { font-size: 18px; background-color: #292525; font-family: 'Montserrat', sans-serif; }

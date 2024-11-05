@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
+    <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
+    <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+  </head>
+  <body>
+    <main>
+	    <div class="row container-fluid">
+	  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+		<div class="card border-0 vscode-sidebar">
+  <h4 class="card-title text-center"> André Fernandes</h4>
+  <a href="/">
+    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
+  </a>
+  <div class="card-body">
+    <p class="card-text font-weight-bold nav-link"> Software Engineer - Data Scientist</p>
+    <p class="card-text nav-link"> FEUP, UPORTO, Portugal</p>
+    <p class="card-text nav-link"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
+    <p class="card-text nav-link"><a href="httpsr//www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
+    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
+    </div> -->
+    
+      <p class="card-text "></p>
+        <a id="posts" class="navbar-link nav-link" href="/posts" role="tab"> Posts </a>
+      
+    
+      <p class="card-text "></p>
+        <a id="resume" class="navbar-link nav-link" href="/resume" role="tab"> Resume </a>
+      
+    
+  </div>
+</div>
+
+	  </div>
+
+	  <div class="col code-editor">
+<h1 class="page-heading mt-3 mb-4">Distributed sorting with Elixir genservers</h1>
+<h1 id="introduction">Introduction</h1>
+
+<p>In this post I am going to discuss how to implement a distributed sorting algorithm using Elixir genservers. The algorithm is based on the quicksort algorithm, which is a comparison sort algorithm that uses a divide-and-conquer strategy to sort an array. The algorithm is implemented in a distributed way, where each process is responsible for sorting a subset of the array. The processes communicate with each other to exchange information about the sorted subsets and to merge them into a final sorted array.</p>
+
+<blockquote>
+  <p><img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Disclaimer</strong>: <a href="https://hexdocs.pm/elixir/GenServer.html#module-when-not-to-use-a-genserver">This is probably not the best use of genservers</a> and could have much easily been implemented using other Elixir abstractions such as tasks. However, since I wanted to learn how to use Genservers, I decided to implement the algorithm using them.</p>
+</blockquote>
+
+<p>You can find the full code for this implementation in this <a href="https://github.com/andre-b-fernandes/distributed_sorting/tree/main">Github repository</a>.</p>
+
+<p><img src="/assets/img/posts/distributed-sorting-elixir-genservers/distributed_algorithm.png" alt="gb"></p>
+
+<p>The algorithm works as follows:</p>
+
+<ul>
+  <li>The main process receives a list to be sorted and the number of processes to be used.</li>
+  <li>The main process creates a master process that will be responsible for coordinating the sorting process.</li>
+  <li>The master process divides the array into <code class="language-plaintext highlighter-rouge">x</code> smaller subsets, where <code class="language-plaintext highlighter-rouge">x</code> is the result of the array being divided by a constant number <code class="language-plaintext highlighter-rouge">k</code>.</li>
+  <li>The master process creates <code class="language-plaintext highlighter-rouge">y</code> genservers, each responsible for sorting a subset of the array.</li>
+  <li>The master process sends the subsets to the genservers.</li>
+  <li>Each genserver sorts its subset using the quicksort algorithm.</li>
+  <li>Each genserver sends the sorted subset back to the main process.</li>
+  <li>At each 2 received sorted arrays, the master process sends them to a genserver that merges them into a single sorted subset and returns it back to the master process.</li>
+  <li>The process is repeated until there is only one sorted subset left with the same size of the original list.</li>
+</ul>
+
+<h1 id="elixir-implementation">Elixir implementation</h1>
+
+<h2 id="mix">Mix</h2>
+
+<p>The project was created via <code class="language-plaintext highlighter-rouge">mix</code> which is a build tool that provides tasks for creating, compiling, testing your application, managing its dependencies and much more.</p>
+
+<p>In the project definition we define the application to come from our <code class="language-plaintext highlighter-rouge">DistributedSorting</code> module:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="n">application</span> <span class="k">do</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="ss">extra_applications:</span> <span class="p">[</span><span class="ss">:logger</span><span class="p">]</span>
+      <span class="c1"># mod: {DistributedSorting, []} # Only if not Mix.env() == :test</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="no">Mix</span><span class="o">.</span><span class="n">env</span><span class="p">()</span> <span class="o">!=</span> <span class="ss">:test</span> <span class="k">do</span>
+      <span class="n">app</span> <span class="o">++</span> <span class="p">[</span><span class="ss">mod:</span> <span class="p">{</span><span class="no">DistributedSorting</span><span class="p">,</span> <span class="p">[]}]</span>
+    <span class="k">else</span>
+      <span class="n">app</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="application-behaviour">Application behaviour</h2>
+
+<p>This module uses the <code class="language-plaintext highlighter-rouge">Application</code> <a href="https://hexdocs.pm/elixir/1.12/Application.html">behaviour</a> and is responsible for starting and stopping the application. It is also responsible for starting the main process that will coordinate the sorting process.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">DistributedSorting</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Application</span>
+
+  <span class="k">def</span> <span class="n">read_file_to_sort</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">content</span><span class="p">}</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="n">content</span>
+    <span class="o">|&gt;</span> <span class="no">String</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="no">String</span><span class="o">.</span><span class="n">to_integer</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">defp</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="n">parsed</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="ss">strict:</span> <span class="p">[</span><span class="ss">file:</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">workers:</span> <span class="ss">:integer</span><span class="p">])</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">parsed</span><span class="p">[</span><span class="ss">:file</span><span class="p">]</span>
+    <span class="n">n_workers</span> <span class="o">=</span> <span class="n">parsed</span><span class="p">[</span><span class="ss">:workers</span><span class="p">]</span>
+    <span class="p">{</span><span class="n">input_file</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">_start_type</span><span class="p">,</span> <span class="n">_start_args</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="no">System</span><span class="o">.</span><span class="n">argv</span><span class="p">()</span>
+    <span class="p">{</span><span class="n">input_file</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">}</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">array_to_sort</span> <span class="o">=</span> <span class="n">read_file_to_sort</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span> <span class="o">=</span> <span class="no">DistributedMaster</span><span class="o">.</span><span class="n">start_link</span><span class="p">({</span><span class="n">array_to_sort</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">})</span>
+
+    <span class="n">ref</span> <span class="o">=</span> <span class="no">Process</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:DOWN</span><span class="p">,</span> <span class="o">^</span><span class="n">ref</span><span class="p">,</span> <span class="ss">:process</span><span class="p">,</span> <span class="n">_object</span><span class="p">,</span> <span class="n">_reason</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Master process terminated"</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The module starts the application by reading a input file whose path is passed as an argument. The file contains a list of integers to be sorted in the following format:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>99022
+20655
+-63097
+88111
+4412
+3499
+42423
+91401
+61189
+-88446
+37496
+-71973
+21591
+-27418
+-42662
+95704
+68402
+-45611
+-89018
+(...)
+</code></pre></div></div>
+
+<h2 id="genservers">Genservers</h2>
+
+<p>The module then starts the main process <code class="language-plaintext highlighter-rouge">DistributedMaster</code> that will coordinate the sorting process.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">DistributedMaster</span> <span class="k">do</span>
+  <span class="nv">@moduledoc</span> <span class="sd">"""
+  Distributed Master module.
+
+  This module implements a GenServer that starts worker processes and sends lists to be sorted.
+  It initally calls the worker processes to sort the lists and then merges the sorted lists.
+  It implements 1 different call message:
+  - {:add_sorted_list, list} - Adds a sorted list to the list of sorted lists and merges two lists when two lists are sorted.
+
+  Once it finishes it will write the sorted list to a file and terminate the worker processes. The file will be named sorted_integers.txt and will contain the sorted integers.
+  """</span>
+
+  <span class="kn">use</span> <span class="no">GenServer</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">init</span><span class="p">({</span><span class="n">array_to_sort</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">})</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Master started with pid </span><span class="si">#{</span><span class="n">inspect</span><span class="p">(</span><span class="n">self</span><span class="p">())</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">n_elements</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">array_to_sort</span><span class="p">)</span>
+    <span class="n">sorted_lists</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">worker_pids</span> <span class="o">=</span> <span class="n">start_worker_processes</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span>
+
+    <span class="n">start_initial_sorting</span><span class="p">(</span><span class="n">worker_pids</span><span class="p">,</span> <span class="n">array_to_sort</span><span class="p">)</span>
+
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">{</span><span class="n">sorted_lists</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">start_initial_sorting</span><span class="p">(</span><span class="n">available_workers</span><span class="p">,</span> <span class="n">array_to_sort</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">to_sort_lists</span> <span class="o">=</span> <span class="no">Enum</span><span class="o">.</span><span class="n">chunk_every</span><span class="p">(</span><span class="n">array_to_sort</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)</span>
+    <span class="n">worker_cycle</span> <span class="o">=</span> <span class="n">available_workers</span> <span class="o">|&gt;</span> <span class="no">Stream</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+
+    <span class="no">Enum</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">worker_cycle</span><span class="p">,</span> <span class="n">to_sort_lists</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="k">fn</span> <span class="p">{</span><span class="n">worker_pid</span><span class="p">,</span> <span class="n">list</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="no">DistributedWorker</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">worker_pid</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">start_worker_processes</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">do</span>
+    <span class="mi">1</span><span class="o">..</span><span class="n">n_workers</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">fn</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">self</span><span class="p">()</span> <span class="o">|&gt;</span> <span class="no">DistributedWorker</span><span class="o">.</span><span class="n">start_link</span><span class="p">()</span> <span class="k">end</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">fn</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">pid</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">handle_call</span><span class="p">({</span><span class="ss">:add_sorted_list</span><span class="p">,</span> <span class="n">list</span><span class="p">},</span> <span class="n">from</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="n">sorted_lists</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span>
+
+    <span class="n">sorted_lists</span> <span class="o">=</span> <span class="n">sorted_lists</span> <span class="o">++</span> <span class="p">[</span><span class="n">list</span><span class="p">]</span>
+    <span class="n">already_sorted_lists</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">sorted_lists</span><span class="p">)</span>
+    <span class="n">length_of_current_list</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+
+    <span class="k">case</span> <span class="p">{</span><span class="n">already_sorted_lists</span><span class="p">,</span> <span class="n">length_of_current_list</span><span class="p">}</span> <span class="k">do</span>
+      <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">^</span><span class="n">n_elements</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"All elements sorted</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">to_write</span> <span class="o">=</span> <span class="n">list</span> <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="no">File</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"sorted_integers.txt"</span><span class="p">,</span> <span class="n">to_write</span><span class="p">,</span> <span class="p">[</span><span class="ss">:write</span><span class="p">])</span>
+        <span class="n">sorted_lists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="p">{</span><span class="ss">:stop</span><span class="p">,</span> <span class="ss">:normal</span><span class="p">,</span> <span class="ss">:ok</span><span class="p">,</span> <span class="p">{</span><span class="n">sorted_lists</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}}</span>
+
+      <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Two lists sorted -&gt; will call merge_sorted</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="p">{</span><span class="n">worker_pid</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">=</span> <span class="n">from</span>
+        <span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_lists</span>
+        <span class="n">sorted_lists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">worker_pid</span> <span class="o">|&gt;</span> <span class="no">DistributedWorker</span><span class="o">.</span><span class="n">merge_sorted</span><span class="p">({</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">})</span>
+        <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="n">sorted_lists</span><span class="p">,</span> <span class="p">{</span><span class="n">sorted_lists</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}}</span>
+
+      <span class="p">{</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="n">sorted_lists</span><span class="p">,</span> <span class="p">{</span><span class="n">sorted_lists</span><span class="p">,</span> <span class="n">n_elements</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">terminate</span><span class="p">(</span><span class="n">_reason</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Terminating DistributedMaster</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="p">{</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">worker_pids</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="n">worker_pids</span> <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="k">fn</span> <span class="n">pid</span> <span class="o">-&gt;</span> <span class="no">DistributedWorker</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">add_sorted_list</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:add_sorted_list</span><span class="p">,</span> <span class="n">list</span><span class="p">})</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">start_link</span><span class="p">({</span><span class="n">array_to_sort</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">})</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="p">{</span><span class="n">array_to_sort</span><span class="p">,</span> <span class="n">n_workers</span><span class="p">})</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">DistributedMaster</code> module is a <a href="https://hexdocs.pm/elixir/GenServer.html">Genserver</a> that starts worker processes and sends lists to be sorted. It initially calls the worker processes to sort the lists and then merges the sorted lists. It implements 1 different call message:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">{:add_sorted_list, list}</code> - Adds a sorted list to the list of sorted lists and calls for merging two lists when two lists were returned. Finally exits when one list of the size of the original is remaining.</li>
+</ul>
+
+<p>Elixir genservers are lightweight <a href="https://hexdocs.pm/elixir/processes.html">processes</a> that are used to manage state and handle messages. They are implemented using the <code class="language-plaintext highlighter-rouge">GenServer</code> module, which provides a set of callbacks that define the behaviour of the genserver. The <code class="language-plaintext highlighter-rouge">init</code> callback is called when the genserver is started and is responsible for initializing the genserver’s state. The <code class="language-plaintext highlighter-rouge">handle_call</code> callback is called when a message is sent to the genserver using the <code class="language-plaintext highlighter-rouge">GenServer.call</code> function. The <code class="language-plaintext highlighter-rouge">terminate</code> callback is called when the genserver is terminated and is responsible for cleaning up any resources used by the genserver.</p>
+
+<p>Processes receive messages in their <code class="language-plaintext highlighter-rouge">mailbox</code> which is a queue where messages are stored until they are processed. The <code class="language-plaintext highlighter-rouge">GenServer.call</code> function is used to send a message to a genserver and wait for a reply. The <code class="language-plaintext highlighter-rouge">GenServer.reply</code> function is used to send a reply to a message that was received by a genserver. The <code class="language-plaintext highlighter-rouge">GenServer.cast</code> function is used to send a message to a genserver without waiting for a reply.</p>
+
+	  </div> 
+	</div>
+
+
+    </main>
+  </body>
+</html>

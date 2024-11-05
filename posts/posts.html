@@ -8,11 +8,12 @@ permalink: /posts/
 <div class="row">
   {% for post in site.posts %}
     <div class="col-sm-4 mt-3">
-      <div class="card zoom">
+      <div class="card">
         <a href="{{ post.url }}" target="_blank">
           {{ post.title }}
-          <img class="mt-1 card-img-top" src="/assets/img/posts/{{ post.image }}">
         </a>
+
+        <img class="mt-1 card-img-top" src="/assets/img/posts/{{ post.image }}">
         <p class="ml-1 card-text">
           {% for cat in post.categories %}
             <small class="text-muted"> #{{ cat }} </small>
