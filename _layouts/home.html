@@ -3,15 +3,29 @@ layout: default
 ---
 
 <div class="row container-fluid">
-	  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+	  <div class="col-lg-2 justify-content-center align-middle border-dark border-left border-right navbar-bg">
 		{% include navbar.html %}
 	  </div>
-
 	  <div class="col code-editor">
 		{%- if page.title -%}
+		<div class="row">
 		  <h1 class="page-heading mt-3 mb-4">{{ page.title }}</h1>
+		</div>
 		{%- endif -%}
+		<div class="row" style="display: block;">
 		{{ content }}
+		</div>
+		<div class="row">
+			<footer class="zsh-footer">
+			  <div class="zsh-prompt">
+			    <span class="user">andre_fernandes</span>@<span class="host">127.0.0.1</span>:<span class="directory">~</span>$ 
+			    <span  class="zsh-input" placeholder="">
+				echo "Page created at {{ page.date | date: "%-d %B %Y"  }}"
+			    </span>
+			  </div>
+			</footer>
+		</div>
+		</div>
 	  </div> 
-	</div>
 </div>
+

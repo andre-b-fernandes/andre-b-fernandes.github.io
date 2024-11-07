@@ -12,36 +12,44 @@
   <body>
     <main>
 	    <div class="row container-fluid">
-	  <div class="col-lg-3 justify-content-center align-middle navbar-bg">
+	  <div class="col-lg-2 justify-content-center align-middle border-dark border-left border-right navbar-bg">
 		<div class="card border-0 vscode-sidebar">
   <h4 class="card-title text-center"> André Fernandes</h4>
   <a href="/">
-    <img class="card-img-top mx-auto" src="/assets/img/profile.jpg" alt="">
+    <img class="card-img-top mx-auto" src="/assets/img/profile-pic.jpeg" alt="">
   </a>
   <div class="card-body">
-    <p class="card-text font-weight-bold nav-link"> Software Engineer - Data Scientist</p>
-    <p class="card-text nav-link"> FEUP, UPORTO, Portugal</p>
+    <p class="card-text font-weight-bold nav-indication"> Software Engineer - Data Scientist</p>
+    <p class="card-text nav-indication"> FEUP, UPORTO, Portugal</p>
     <p class="card-text nav-link"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
     <p class="card-text nav-link"><a href="httpsr//www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
-    <!-- <div class="nav flex-column nav-pills" id="navBarTab" role="tablist" aria-orientation="vertical">
-    </div> -->
     
       <p class="card-text "></p>
-        <a id="posts" class="navbar-link nav-link" href="/posts" role="tab"> Posts </a>
+        <a id="posts" class="navbar-link nav-link" href="/posts" role="tab">
+
+		 <i class="bi bi-file-earmark-code-fill"></i>
+		Posts 
+	</a>
       
     
       <p class="card-text "></p>
-        <a id="resume" class="navbar-link nav-link" href="/resume" role="tab"> Resume </a>
+        <a id="resume" class="navbar-link nav-link" href="/resume" role="tab">
+
+		 <i class="bi bi-file-earmark-code-fill"></i>
+		Resume 
+	</a>
       
     
   </div>
 </div>
 
 	  </div>
-
 	  <div class="col code-editor">
-<h1 class="page-heading mt-3 mb-4">Distributed sorting with Elixir genservers</h1>
-<h1 id="introduction">Introduction</h1>
+<div class="row">
+		  <h1 class="page-heading mt-3 mb-4">Distributed sorting with Elixir genservers</h1>
+		</div>
+<div class="row" style="display: block;">
+		<h1 id="introduction">Introduction</h1>
 
 <p>In this post I am going to discuss how to implement a distributed sorting algorithm using Elixir genservers. The algorithm is based on the quicksort algorithm, which is a comparison sort algorithm that uses a divide-and-conquer strategy to sort an array. The algorithm is implemented in a distributed way, where each process is responsible for sorting a subset of the array. The processes communicate with each other to exchange information about the sorted subsets and to merge them into a final sorted array.</p>
 
@@ -88,6 +96,8 @@
     <span class="k">end</span>
   <span class="k">end</span>
 </code></pre></div></div>
+
+<p>Run the application as <code class="language-plaintext highlighter-rouge">mix run -- --file yourfilepath.txt --workers 100</code></p>
 
 <h2 id="application-behaviour">Application behaviour</h2>
 
@@ -256,8 +266,152 @@
 
 <p>Processes receive messages in their <code class="language-plaintext highlighter-rouge">mailbox</code> which is a queue where messages are stored until they are processed. The <code class="language-plaintext highlighter-rouge">GenServer.call</code> function is used to send a message to a genserver and wait for a reply. The <code class="language-plaintext highlighter-rouge">GenServer.reply</code> function is used to send a reply to a message that was received by a genserver. The <code class="language-plaintext highlighter-rouge">GenServer.cast</code> function is used to send a message to a genserver without waiting for a reply.</p>
 
+<p>In our case the distributed master process handles syncronous calls to add sorted lists and through <a href="https://hexdocs.pm/elixir/pattern-matching.html">pattern matching</a> decides what to do with the sorted lists:</p>
+<ul>
+  <li>When two lists are sorted it casts a messsage <code class="language-plaintext highlighter-rouge">message_sorted</code> to the <code class="language-plaintext highlighter-rouge">DistributedWorker.merge_sorted</code> function to merge the two lists.</li>
+  <li>When all lists are sorted it writes the sorted list to a file and returns <code class="language-plaintext highlighter-rouge">:stop</code> to terminate the genserver. If this is the case it also terminates all the child worker processes on the <code class="language-plaintext highlighter-rouge">terminate</code> callback.</li>
+</ul>
+
+<p>The <code class="language-plaintext highlighter-rouge">DistributedWorker</code> module is a genserver that sorts a list of integers using the quicksort algorithm. The module implements 2 different cast messages:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">{:sort, list}</code> - Sorts a list of integers using the quicksort algorithm.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">{:merge_sorted, {list1, list2}}</code> - Merges two sorted lists into a single sorted list.</li>
+</ul>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">DistributedWorker</span> <span class="k">do</span>
+  <span class="nv">@moduledoc</span> <span class="sd">"""
+  Distributed Worker module
+
+  This module implements a GenServer that sorts a list of integers and merges two sorted lists.
+  It implements 3 different cast messages:
+  - {:sort, caller_pid, list} - Sorts the list and sends the sorted list to the caller_pid
+  - {:merge_sorted_lists, caller_pid, list1, list2} - Merges the two sorted lists and sends the merged list to the caller_pid
+  - :finish - Stops the GenServer
+  """</span>
+  <span class="kn">import</span> <span class="no">Sorter</span><span class="p">,</span> <span class="ss">only:</span> <span class="p">[</span><span class="ss">merge_sorted_lists:</span> <span class="mi">3</span><span class="p">,</span> <span class="ss">sort:</span> <span class="mi">1</span><span class="p">]</span>
+  <span class="kn">use</span> <span class="no">GenServer</span>
+
+  <span class="k">def</span> <span class="n">start_link</span><span class="p">(</span><span class="n">master_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="n">master_pid</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">master_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Worker started with PID </span><span class="si">#{</span><span class="n">inspect</span><span class="p">(</span><span class="n">self</span><span class="p">())</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">master_pid</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:sort</span><span class="p">,</span> <span class="n">list</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"State </span><span class="si">#{</span><span class="n">inspect</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">master_pid</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="n">sorted</span> <span class="o">=</span> <span class="n">sort</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+    <span class="n">master_pid</span> <span class="o">|&gt;</span> <span class="no">DistributedMaster</span><span class="o">.</span><span class="n">add_sorted_list</span><span class="p">(</span><span class="n">sorted</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">master_pid</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:merge_sorted_lists</span><span class="p">,</span> <span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">master_pid</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="n">sorted</span> <span class="o">=</span> <span class="n">merge_sorted_lists</span><span class="p">([],</span> <span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">)</span>
+    <span class="n">master_pid</span> <span class="o">|&gt;</span> <span class="no">DistributedMaster</span><span class="o">.</span><span class="n">add_sorted_list</span><span class="p">(</span><span class="n">sorted</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">master_pid</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">handle_cast</span><span class="p">(</span><span class="ss">:finish</span><span class="p">,</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Stopping Worker</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:stop</span><span class="p">,</span> <span class="ss">:normal</span><span class="p">,</span> <span class="p">%{}}</span>
+  <span class="k">end</span>
+
+  <span class="nv">@impl</span> <span class="no">true</span>
+  <span class="k">def</span> <span class="n">terminate</span><span class="p">(</span><span class="n">_reason</span><span class="p">,</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="s2">"Terminating Worker</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">finish</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="ss">:finish</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sort</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">list</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:sort</span><span class="p">,</span> <span class="n">list</span><span class="p">})</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">merge_sorted</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">})</span> <span class="k">do</span>
+    <span class="no">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:merge_sorted_lists</span><span class="p">,</span> <span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">})</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Notice that the DistributedWorker starts with a <code class="language-plaintext highlighter-rouge">master_pid</code> that is the pid of the <code class="language-plaintext highlighter-rouge">DistributedMaster</code> genserver. This is used to send messages to the master process to add the sorted lists. The <code class="language-plaintext highlighter-rouge">DistributedWorker</code> module is a genserver that sorts a list of integers using the quicksort algorithm. The module implements 2 different cast messages:
+The process id is stored in the state via the <code class="language-plaintext highlighter-rouge">init</code> callback.</p>
+
+<h2 id="sorter-module-logic">Sorter module logic</h2>
+
+<p>The worker module imports the <code class="language-plaintext highlighter-rouge">Sorter</code> module <code class="language-plaintext highlighter-rouge">merge_sorted_lists/3</code> and <code class="language-plaintext highlighter-rouge">sort/1</code> functions.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">Sorter</span> <span class="k">do</span>
+  <span class="nv">@moduledoc</span> <span class="sd">"""
+  Module for sorting lists.
+
+  It contains functionality for merging two sorted lists and sorting a list.
+  Merging sorted lists complexity is O(m + n) where m and n are the lengths of the lists.
+  Sorting a list complexity is O(n * log(n)) where n is the length of the list.
+  """</span>
+  <span class="k">def</span> <span class="n">merge_sorted_lists</span><span class="p">(</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[])</span> <span class="k">do</span>
+    <span class="n">sorted_acc</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">merge_sorted_lists</span><span class="p">(</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="p">[])</span> <span class="k">do</span>
+    <span class="n">sorted_acc</span> <span class="o">++</span> <span class="n">first</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">merge_sorted_lists</span><span class="p">(</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="p">[],</span> <span class="n">second</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">sorted_acc</span> <span class="o">++</span> <span class="n">second</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">merge_sorted_lists</span><span class="p">(</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">[</span><span class="n">lhead</span> <span class="o">|</span> <span class="n">ltail</span><span class="p">]</span> <span class="o">=</span> <span class="n">first</span>
+    <span class="p">[</span><span class="n">rhead</span> <span class="o">|</span> <span class="n">rtail</span><span class="p">]</span> <span class="o">=</span> <span class="n">second</span>
+
+    <span class="p">{</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">}</span> <span class="o">=</span>
+      <span class="k">if</span> <span class="n">lhead</span> <span class="o">&lt;=</span> <span class="n">rhead</span> <span class="k">do</span>
+        <span class="p">{</span><span class="n">sorted_acc</span> <span class="o">++</span> <span class="p">[</span><span class="n">lhead</span><span class="p">],</span> <span class="n">ltail</span><span class="p">,</span> <span class="n">second</span><span class="p">}</span>
+      <span class="k">else</span>
+        <span class="p">{</span><span class="n">sorted_acc</span> <span class="o">++</span> <span class="p">[</span><span class="n">rhead</span><span class="p">],</span> <span class="n">first</span><span class="p">,</span> <span class="n">rtail</span><span class="p">}</span>
+      <span class="k">end</span>
+
+    <span class="n">merge_sorted_lists</span><span class="p">(</span><span class="n">sorted_acc</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sort</span><span class="p">(</span><span class="n">list</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Enum</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Notice the pattern-matching and recursion usage of the <code class="language-plaintext highlighter-rouge">merge_sorted_lists</code> function calls instead of explicit if-else statements that are checked 
+during application runtime.
+Instead we define a function for each possible case, to be efficiently compiled and let the BEAM VM decide which function to call at runtime.</p>
+
+
+		</div>
+		<div class="row">
+			<footer class="zsh-footer">
+			  <div class="zsh-prompt">
+			    <span class="user">andre_fernandes</span>@<span class="host">127.0.0.1</span>:<span class="directory">~</span>$ 
+			    <span class="zsh-input" placeholder="">
+				echo "Page created at 1 April 2024"
+			    </span>
+			  </div>
+			</footer>
+		</div>
+		</div>
 	  </div> 
-	</div>
+
 
 
     </main>

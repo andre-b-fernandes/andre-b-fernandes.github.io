@@ -5,6 +5,7 @@
 layout: home
 list_title: 'Posts'
 title: Welcome
+date: 2021-06-27
 ---
 
 Welcome to my personal website.
@@ -15,6 +16,6 @@ I come from **Vila Nova de Famalicão**, a city located in the **Braga** distric
 
 My main interests are **software development**, **computer science**, **technology**, **horror movies**, **sports** and **travelling**.
 
-In here, you'll find **professional information** about myself as well as some tech/computer-science related posts that I enjoy writing about some things I've learned through my work/study experience.
+In here, you’ll find **professional information** about myself as well as some tech/computer-science related posts that I enjoy writing about and some things I’ve learned through my work/study experience.
 
 Feel free to **contact me** through the provided social media.

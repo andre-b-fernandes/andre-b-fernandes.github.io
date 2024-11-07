@@ -56,6 +56,8 @@ def application do
   end
 ```
 
+Run the application as ``mix run -- --file yourfilepath.txt --workers 100``
+
 ## Application behaviour
 
 This module uses the `Application` [behaviour](https://hexdocs.pm/elixir/1.12/Application.html) and is responsible for starting and stopping the application. It is also responsible for starting the main process that will coordinate the sorting process.
@@ -223,3 +225,132 @@ The `DistributedMaster` module is a [Genserver](https://hexdocs.pm/elixir/GenSer
 Elixir genservers are lightweight [processes](https://hexdocs.pm/elixir/processes.html) that are used to manage state and handle messages. They are implemented using the `GenServer` module, which provides a set of callbacks that define the behaviour of the genserver. The `init` callback is called when the genserver is started and is responsible for initializing the genserver's state. The `handle_call` callback is called when a message is sent to the genserver using the `GenServer.call` function. The `terminate` callback is called when the genserver is terminated and is responsible for cleaning up any resources used by the genserver.
 
 Processes receive messages in their `mailbox` which is a queue where messages are stored until they are processed. The `GenServer.call` function is used to send a message to a genserver and wait for a reply. The `GenServer.reply` function is used to send a reply to a message that was received by a genserver. The `GenServer.cast` function is used to send a message to a genserver without waiting for a reply.
+
+In our case the distributed master process handles syncronous calls to add sorted lists and through [pattern matching](https://hexdocs.pm/elixir/pattern-matching.html) decides what to do with the sorted lists: 
+- When two lists are sorted it casts a messsage `message_sorted` to the `DistributedWorker.merge_sorted` function to merge the two lists.
+- When all lists are sorted it writes the sorted list to a file and returns `:stop` to terminate the genserver. If this is the case it also terminates all the child worker processes on the `terminate` callback.
+
+The `DistributedWorker` module is a genserver that sorts a list of integers using the quicksort algorithm. The module implements 2 different cast messages:
+
+- `{:sort, list}` - Sorts a list of integers using the quicksort algorithm.
+- `{:merge_sorted, {list1, list2}}` - Merges two sorted lists into a single sorted list.
+
+```elixir
+defmodule DistributedWorker do
+  @moduledoc """
+  Distributed Worker module
+
+  This module implements a GenServer that sorts a list of integers and merges two sorted lists.
+  It implements 3 different cast messages:
+  - {:sort, caller_pid, list} - Sorts the list and sends the sorted list to the caller_pid
+  - {:merge_sorted_lists, caller_pid, list1, list2} - Merges the two sorted lists and sends the merged list to the caller_pid
+  - :finish - Stops the GenServer
+  """
+  import Sorter, only: [merge_sorted_lists: 3, sort: 1]
+  use GenServer
+
+  def start_link(master_pid) do
+    GenServer.start_link(__MODULE__, master_pid)
+  end
+
+  @impl true
+  def init(master_pid) do
+    IO.puts("Worker started with PID #{inspect(self())}\n")
+    {:ok, master_pid}
+  end
+
+  @impl true
+  def handle_cast({:sort, list}, state) do
+    IO.puts("State #{inspect(state)}\n")
+    master_pid = state
+    sorted = sort(list)
+    master_pid |> DistributedMaster.add_sorted_list(sorted)
+    {:noreply, master_pid}
+  end
+
+  @impl true
+  def handle_cast({:merge_sorted_lists, list1, list2}, state) do
+    master_pid = state
+    sorted = merge_sorted_lists([], list1, list2)
+    master_pid |> DistributedMaster.add_sorted_list(sorted)
+    {:noreply, master_pid}
+  end
+
+  @impl true
+  def handle_cast(:finish, _state) do
+    IO.puts("Stopping Worker\n")
+    {:stop, :normal, %{}}
+  end
+
+  @impl true
+  def terminate(_reason, _state) do
+    IO.puts("Terminating Worker\n")
+  end
+
+  def finish(pid) do
+    GenServer.cast(pid, :finish)
+  end
+
+  def sort(pid, list) do
+    GenServer.cast(pid, {:sort, list})
+  end
+
+  def merge_sorted(pid, {list1, list2}) do
+    GenServer.cast(pid, {:merge_sorted_lists, list1, list2})
+  end
+end
+```
+
+Notice that the DistributedWorker starts with a `master_pid` that is the pid of the `DistributedMaster` genserver. This is used to send messages to the master process to add the sorted lists. The `DistributedWorker` module is a genserver that sorts a list of integers using the quicksort algorithm. The module implements 2 different cast messages:
+The process id is stored in the state via the `init` callback.
+
+
+## Sorter module logic
+
+The worker module imports the `Sorter` module `merge_sorted_lists/3` and `sort/1` functions.
+
+```elixir
+defmodule Sorter do
+  @moduledoc """
+  Module for sorting lists.
+
+  It contains functionality for merging two sorted lists and sorting a list.
+  Merging sorted lists complexity is O(m + n) where m and n are the lengths of the lists.
+  Sorting a list complexity is O(n * log(n)) where n is the length of the list.
+  """
+  def merge_sorted_lists(sorted_acc, [], []) do
+    sorted_acc
+  end
+
+  def merge_sorted_lists(sorted_acc, first, []) do
+    sorted_acc ++ first
+  end
+
+  def merge_sorted_lists(sorted_acc, [], second) do
+    sorted_acc ++ second
+  end
+
+  def merge_sorted_lists(sorted_acc, first, second) do
+    [lhead | ltail] = first
+    [rhead | rtail] = second
+
+    {sorted_acc, first, second} =
+      if lhead <= rhead do
+        {sorted_acc ++ [lhead], ltail, second}
+      else
+        {sorted_acc ++ [rhead], first, rtail}
+      end
+
+    merge_sorted_lists(sorted_acc, first, second)
+  end
+
+  def sort(list) do
+    Enum.sort(list)
+  end
+end
+```
+
+Notice the pattern-matching and recursion usage of the `merge_sorted_lists` function calls instead of explicit if-else statements that are checked 
+during application runtime.
+Instead we define a function for each possible case, to be efficiently compiled and let the BEAM VM decide which function to call at runtime.
+
