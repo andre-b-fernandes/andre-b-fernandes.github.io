@@ -1,4 +1,589 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://andre-b-fernandes.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://andre-b-fernandes.github.io/" rel="alternate" type="text/html" /><updated>2024-11-07T10:36:07+00:00</updated><id>https://andre-b-fernandes.github.io/feed.xml</id><title type="html">André Fernandes</title><subtitle>My curriculum vitae</subtitle><entry><title type="html">Distributed sorting with Elixir genservers</title><link href="https://andre-b-fernandes.github.io/distributed-sorting-elixir-genservers/" rel="alternate" type="text/html" title="Distributed sorting with Elixir genservers" /><published>2024-04-01T00:00:00+01:00</published><updated>2024-04-01T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/distributed-sorting-elixir</id><content type="html" xml:base="https://andre-b-fernandes.github.io/distributed-sorting-elixir-genservers/">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://andre-b-fernandes.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://andre-b-fernandes.github.io/" rel="alternate" type="text/html" /><updated>2025-02-24T20:22:19+00:00</updated><id>https://andre-b-fernandes.github.io/feed.xml</id><title type="html">André Fernandes</title><subtitle>My curriculum vitae</subtitle><entry><title type="html">Performance-Aware Programming &amp;amp; Python: Optimizing Euclidean Distance Calculation</title><link href="https://andre-b-fernandes.github.io/performance-aware-programming-python/" rel="alternate" type="text/html" title="Performance-Aware Programming &amp;amp; Python: Optimizing Euclidean Distance Calculation" /><published>2024-04-01T00:00:00+01:00</published><updated>2024-04-01T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/performance-aware-programming-python</id><content type="html" xml:base="https://andre-b-fernandes.github.io/performance-aware-programming-python/">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;Performance-aware programming is the practice of writing code with an understanding of how it executes on the underlying hardware. While Python is known for its ease of use and readability, it is often criticized for being slow compared to lower-level languages like C. However, with the right optimization techniques, Python programs can be significantly accelerated.&lt;/p&gt;
+
+&lt;p&gt;In this blog post, we will explore CPU optimizations in Python and C by optimizing a simple but computationally expensive function: calculating the Euclidean distance between two matrices. The goal is to show how performance bottlenecks arise and how we can systematically improve execution time using different optimization strategies.&lt;/p&gt;
+
+&lt;p&gt;Example to Improve: Euclidean Distance Computation&lt;/p&gt;
+
+&lt;p&gt;The Euclidean distance between two matrices, Q (M x D) and X (N x D), is a fundamental operation in machine learning and data science applications. Given:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Q: A matrix of shape (M, D)&lt;/li&gt;
+  &lt;li&gt;X: A matrix of shape (N, D)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The Euclidean distance between every pair of rows from Q and X is computed as:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/performance-aware-programming-python/formula.png&quot; alt=&quot;Euclidean Distance Formula&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I will start by a basic naive python implementation:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;math&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    Compute the Euclidean distance between two matrices in a naive way.
+    Pure python implementation
+
+    Arguments:
+        Q -- A matrix of shape (M, D)
+        X -- A matrix of shape (N, D)
+    Returns: A matrix of shape (M, N) where each element (i, j) is the Euclidean distance between Q[i] and X[j]
+    &quot;&quot;&quot;&lt;/span&gt;   
+    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Q has M rows, D features
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# X has N rows, D features
+&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# Initialize distance matrix (M x N)
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Iterate over each query vector
+&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Iterate over each dataset vector
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Compute squared distance
+&lt;/span&gt;                &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Squaring each difference
+&lt;/span&gt;            &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Compute final Euclidean distance
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;waste-understanding-pythons-cpu-overhead&quot;&gt;Waste: Understanding Python’s CPU Overhead&lt;/h1&gt;
+
+&lt;p&gt;A CPU executes a sequence of instructions that perform computations. For Euclidean distance calculations, relevant instructions include:&lt;/p&gt;
+
+&lt;p&gt;Load: Fetching matrix values from memory.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Subtract: Computing the difference between elements.&lt;/li&gt;
+  &lt;li&gt;Multiply: Squaring the differences.&lt;/li&gt;
+  &lt;li&gt;Sum: Accumulating the squared differences.&lt;/li&gt;
+  &lt;li&gt;Square Root: Finalizing the Euclidean distance calculation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In an optimized language like C, these operations translate directly into efficient machine instructions. However, in Python, the execution path is far more complex.
+Example of x86_64 architecture:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;int a = 0;
+int b = 2;
+a+=b;
+—-----------------------------
+mov eax, [var1] ; Load var1 into eax
+mov ebx, [var2] ; Load var2 into ebx 
+add eax, ebx ; Add eax with ebx; store in eax
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;python-execution-from-function-call-to-machine-code&quot;&gt;Python Execution: From Function Call to Machine Code&lt;/h2&gt;
+
+&lt;p&gt;When executing a function in Python, the following steps occur:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Python Function Call&lt;/strong&gt;: The interpreter receives the function call.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Python Interpreter Execution&lt;/strong&gt;: The function is parsed and converted into bytecode.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Bytecode Interpretation&lt;/strong&gt;: CPython reads and interprets the bytecode.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Assembler and Machine Code Execution&lt;/strong&gt;: The CPU eventually processes low-level instructions derived from Python’s high-level operations.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Each of these steps introduces overhead, making Python significantly slower than compiled languages.&lt;/p&gt;
+
+&lt;h2 id=&quot;unnecessary-cpu-cycles-in-python&quot;&gt;Unnecessary CPU cycles in Python&lt;/h2&gt;
+
+&lt;p&gt;Python wastes CPU cycles with operations unrelated to actual Euclidean distance computation, such as:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Dynamic Type Checking&lt;/strong&gt;: Every operation involves type checks.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Reference Counting for Memory Management&lt;/strong&gt;: Objects are tracked, leading to frequent memory overhead.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Interpreter Overhead&lt;/strong&gt;: The Python runtime manages function calls, loops, and memory allocation dynamically.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Because of these inefficiencies, raw Python implementations of mathematical computations can be orders of magnitude slower than optimized C or NumPy implementations.&lt;/p&gt;
+
+&lt;p&gt;Example of disassembled python code using the dis module in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;euclidean_distance&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;dis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;dis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;naive_euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; 24         266 LOAD_FAST                0 (Q)  // Push to stack
+            268 LOAD_FAST                5 (i)  // Push to stack
+            270 BINARY_SUBSCR                   // Pop two items from the stack, subscript them (Q[i]), and push the result
+            280 LOAD_FAST                8 (k) // Push to stack
+            282 BINARY_SUBSCR                   // Pop two items from the stack, subscript them (Q[i][k]), and push the result
+            292 LOAD_FAST                1 (X) // Push to stack
+            294 LOAD_FAST                6 (j) // Push to stack
+            296 BINARY_SUBSCR                   // Pop two items from the stack, subscript them (X[j]), and push the result
+            306 LOAD_FAST                8 (k) // Push to stack
+            308 BINARY_SUBSCR                   // Pop two items from the stack, subscript them (X[j][k]), and push the result
+            318 BINARY_OP               10 (-)  // Pop two items from the stack, subtract them, and push the result
+            322 STORE_FAST               9 (diff) // Store the result in a variable
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;using-numba-for-just-in-time-compilation&quot;&gt;Using Numba for Just-In-Time Compilation&lt;/h2&gt;
+
+&lt;p&gt;An alternative to rewriting in C is using Numba, a Just-In-Time (JIT) compiler that translates Python code into optimized machine code using LLVM. Unlike CPython’s bytecode interpretation, Numba compiles the function at runtime and injects machine code into memory for execution.&lt;/p&gt;
+
+&lt;p&gt;A simple Numba-optimized implementation:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;math&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numba&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;njit&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;njit&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Computes Euclidean distance using a cache-friendly approach in pure Python&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;Q_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;X_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# Transpose X for better cache locality
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;X_T&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+        
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;dot_product&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q_sq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dot_product&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_sq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Why Numba Runs Faster?&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;JIT Compilation&lt;/strong&gt;: Translates Python functions into fast machine code at runtime.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;LLVM Optimization&lt;/strong&gt;: Uses LLVM to optimize loops and memory access.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Bypasses CPython Overhead&lt;/strong&gt;: Avoids bytecode interpretation, reducing waste.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Minimal Code Changes: Requires only a decorator (@jit) to accelerate performance.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-a-c-shared-object-from-ctypes&quot;&gt;Using a C shared object from ctypes&lt;/h2&gt;
+
+&lt;p&gt;To overcome Python’s overhead, we can implement the same Euclidean distance function in C. Unlike Python, C is a compiled language that translates directly to efficient machine code, avoiding the performance bottlenecks introduced by Python’s dynamic nature.&lt;/p&gt;
+
+&lt;p&gt;A simple C implementation of Euclidean distance computation:&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;math.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// Function to compute pairwise Euclidean distance&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Iterate over all pairs of points&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+	 	&lt;span class=&quot;c1&quot;&gt;// We access Q and X in a row-major order by computing the index&lt;/span&gt;
+		&lt;span class=&quot;c1&quot;&gt;// as i * D + k and j * D + k respectively.&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In order to call it from python we can use the ctypes module:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;ctypes&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Load the compiled C shared library
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CDLL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;./naive.so&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Use &quot;.dll&quot; on Windows
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# Define function prototype: void euclidean_distance(float*, float*, float*, int, int, int)
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argtypes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Q
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# X
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# D_matrix
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# M
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# N
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_int&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# D
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Call the C function for Euclidean distance computation&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Flatten NumPy arrays to 1D C-compatible arrays
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;q_flat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x_flat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Convert to C pointers
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;q_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_flat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data_as&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_flat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data_as&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;d_ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data_as&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;POINTER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctypes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Call the C function
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d_ptr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;No Interpreter Overhead: The compiled C code runs directly on the CPU.&lt;/li&gt;
+  &lt;li&gt;Efficient Memory Management: C operates on raw arrays with minimal overhead.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;instruction-level-parallelism&quot;&gt;Instruction-Level Parallelism&lt;/h1&gt;
+
+&lt;p&gt;Modern CPUs have multiple execution pipelines, allowing them to process multiple instructions in parallel. However, naive implementations do not fully utilize this capability.&lt;/p&gt;
+
+&lt;p&gt;Challenges in Parallel Execution&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Pipeline Dependency&lt;/strong&gt;: The instruction pipeline can only compute the next value of the sum if the current one has been completed.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Missed Opportunities for Optimization&lt;/strong&gt;: The sum operation does not take advantage of the commutative property - the order of addition does not matter for the addition operation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Generated instructions in Arm A64 (M1 chip) for the inner loop of the C implementation:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000000000003ee4	ldr	x8, [sp, #0x38]
+0000000000003ee8	ldr	w9, [sp, #0x18]
+0000000000003eec	ldr	w10, [sp, #0x1c]
+0000000000003ef0	mul	w9, w9, w10
+0000000000003ef4	ldr	w10, [sp, #0xc]
+0000000000003ef8	add	w9, w9, w10
+0000000000003efc	ldr	s0, [x8, w9, sxtw #2]
+0000000000003f00	ldr	x8, [sp, #0x30]
+0000000000003f04	ldr	w9, [sp, #0x14]
+0000000000003f08	ldr	w10, [sp, #0x1c]
+0000000000003f0c	mul	w9, w9, w10
+0000000000003f10	ldr	w10, [sp, #0xc]
+0000000000003f14	add	w9, w9, w10
+0000000000003f18	ldr	s1, [x8, w9, sxtw #2]
+0000000000003f1c	fsub	s0, s0, s1
+0000000000003f20	str	s0, [sp, #0x8]
+0000000000003f24	ldr	s0, [sp, #0x8]
+0000000000003f28	ldr	s1, [sp, #0x8]
+0000000000003f2c	ldr	s2, [sp, #0x10]
+0000000000003f30	fmadd	s0, s0, s1, s2 // -&amp;gt; Only one fused multiply-add instruction per cycle
+0000000000003f34	str	s0, [sp, #0x10]
+0000000000003f38	b	0x3f3c
+0000000000003f3c	ldr	w8, [sp, #0xc]
+0000000000003f40	add	w8, w8, #0x1
+0000000000003f44	str	w8, [sp, #0xc]
+0000000000003f48	b	0x3ecc
+0000000000003f4c	ldr	s0, [sp, #0x10]
+0000000000003f50	fcvt	d0, s0
+0000000000003f54	fsqrt	d0, d0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;loop-unrolling&quot;&gt;Loop unrolling&lt;/h2&gt;
+
+&lt;p&gt;By unrolling the loop, we can increase the number of instructions executed per iteration, allowing the CPU to better utilize its execution pipelines.&lt;/p&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;math.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#define UNROLL_FACTOR 4
+&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            
+            &lt;span class=&quot;c1&quot;&gt;// Unrolled loop&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UNROLL_FACTOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UNROLL_FACTOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            
+            &lt;span class=&quot;c1&quot;&gt;// Handle remaining elements&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            
+            &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s take a look now at the generated instructions for the inner loop:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000000000003e74	str	s0, [sp, #0xc] // Storing in #0xc diff4.
+0000000000003e78	ldr	s0, [sp, #0x18] // loading diff2 into s0
+0000000000003e7c	ldr	s1, [sp, #0x18] // loading diff2 into s1
+0000000000003e80	ldr	s2, [sp, #0x14] // loading diff1 into s2
+0000000000003e84	ldr	s3, [sp, #0x14] // loading diff1 into s3
+0000000000003e88	fmul	s2, s2, s3 // Multiplying diff1 * diff1
+0000000000003e8c	fmadd	s2, s0, s1, s2 // Adding diff2 * diff2 to the previous result
+0000000000003e90	ldr	s0, [sp, #0x10] // loading diff3 into s0
+0000000000003e94	ldr	s1, [sp, #0x10] // loading diff3 into s1
+0000000000003e98	fmadd	s2, s0, s1, s2 // Adding diff3 * diff3 to the previous result
+0000000000003e9c	ldr	s0, [sp, #0xc] // loading diff4 into s0
+0000000000003ea0	ldr	s1, [sp, #0xc] // loading diff4 into s1
+0000000000003ea4	fmadd	s1, s0, s1, s2 // Adding diff4 * diff4 to the previous result
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It now generates more instructions per iteration, allowing the CPU to better utilize its execution pipelines.&lt;/p&gt;
+
+&lt;h1 id=&quot;cpu-caching&quot;&gt;CPU Caching&lt;/h1&gt;
+
+&lt;p&gt;Efficient memory access is crucial for high-performance computing. Modern CPUs rely on multi-level caches to speed up memory access, but poor memory access patterns can lead to frequent cache misses and slow down computation.&lt;/p&gt;
+
+&lt;h2 id=&quot;understanding-cpu-caches&quot;&gt;Understanding CPU Caches&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Cache Lines&lt;/strong&gt;: Data from RAM is loaded into the CPU cache in blocks called cache lines, typically 64 bytes in size.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cache Hierarchy&lt;/strong&gt;: CPUs have multiple levels of cache (L1, L2, L3) that are much faster than RAM.
+    &lt;ul&gt;
+      &lt;li&gt;L1 Cache (Fastest, Smallest)
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Size&lt;/strong&gt;: Typically 32KB to 128KB per core&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Latency&lt;/strong&gt;: &lt;em&gt;~3-5&lt;/em&gt; CPU cycles&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;L2 Cache (Larger, Slightly Slower)
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Size&lt;/strong&gt;: Typically 256KB to 2MB per core&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Latency&lt;/strong&gt;: &lt;em&gt;~10&lt;/em&gt; CPU cycles&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;L3 Cache (Largest, Shared Across Cores)
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Size&lt;/strong&gt;: Typically 4MB to 64MB shared across all cores&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Latency&lt;/strong&gt;: &lt;em&gt;~30-50&lt;/em&gt; CPU cycles
+RAM (Slowest, Largest)&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Latency&lt;/strong&gt;: &lt;em&gt;~100+&lt;/em&gt; CPU cycles&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cache Locality&lt;/strong&gt;: Accessing nearby memory locations increases the likelihood of cache hits.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Cache Evictions&lt;/strong&gt;::  When new data is loaded and there isn’t enough space in the cache, old data gets evicted.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Modern CPUs have hardware prefetchers that try to predict memory access patterns and load data into cache before it is needed. Efficient memory access should follow predictable patterns that align with cache prefetching.
+However, accessing data inefficiently can lead to performance issues:&lt;/p&gt;
+
+&lt;p&gt;To optimize performance:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Access Memory Sequentially&lt;/strong&gt;: Iterating over contiguous memory locations minimizes cache misses.
+&lt;strong&gt;Structure Data for Locality&lt;/strong&gt;: Store data in a way that maximizes reuse before eviction.
+&lt;strong&gt;Use Blocking Techniques&lt;/strong&gt;: Process data in small blocks that fit within cache lines to reduce cache thrashing.
+By optimizing memory access patterns, we can significantly speed up our Euclidean distance computations and take full advantage of modern CPU architectures.&lt;/p&gt;
+
+&lt;h2 id=&quot;our-issue&quot;&gt;Our issue&lt;/h2&gt;
+
+&lt;p&gt;In our Euclidean distance computation, we compute distances between rows of matrices &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Q (M × D)&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X (N × D)&lt;/code&gt;.
+A naive implementation accesses &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X[j, k]&lt;/code&gt; repeatedly for each element in Q, which leads to poor cache utilization since not the entire X matrix migh fit in the cache.
+Each iteration accesses a new row of X, which may cause cache eviction.
+Fetching &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;X[j, k]&lt;/code&gt;  again requires reloading it from RAM, adding significant latency.
+This leads to thrashing, where useful data is frequently replaced before it can be reused.&lt;/p&gt;
+
+&lt;h3 id=&quot;solution-blocking&quot;&gt;Solution: Blocking&lt;/h3&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Process X in blocks&lt;/span&gt;
+        &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Ensure last block fits&lt;/span&gt;
+	    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Iterate within block&lt;/span&gt;
+		    &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		    
+		    &lt;span class=&quot;c1&quot;&gt;// Unrolled loop&lt;/span&gt;
+		    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UNROLL_FACTOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UNROLL_FACTOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		    
+		    &lt;span class=&quot;c1&quot;&gt;// Handle remaining elements&lt;/span&gt;
+		    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+			&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+			&lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		    
+		    &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sqrt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_sq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we process X in blocks of size B, ensuring that each block fits within the cache.
+The next block will only start once the current block is finished being used for all elements in Q.&lt;/p&gt;
+
+&lt;h1 id=&quot;simd-vectorization&quot;&gt;SIMD Vectorization&lt;/h1&gt;
+
+&lt;p&gt;To further improve performance, we can use Single Instruction, Multiple Data (SIMD), which allows multiple computations to be executed in parallel using special vector instructions.&lt;/p&gt;
+
+&lt;h2 id=&quot;understanding-cpu-registers&quot;&gt;Understanding CPU Registers&lt;/h2&gt;
+
+&lt;p&gt;Registers are small, ultra-fast memory locations inside the processor that store:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Operands and results of operations&lt;/li&gt;
+  &lt;li&gt;Memory addresses during execution&lt;/li&gt;
+  &lt;li&gt;Control information for execution flow&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Types of registers include:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;General-purpose registers (store intermediate values)&lt;/li&gt;
+  &lt;li&gt;Control registers (manage execution state)&lt;/li&gt;
+  &lt;li&gt;Instruction pointer registers (track execution position)&lt;/li&gt;
+  &lt;li&gt;Flag registers (store condition codes)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;simd-processing-multiple-values-at-once&quot;&gt;SIMD: Processing Multiple Values at Once&lt;/h2&gt;
+
+&lt;p&gt;Normally, if we wish to operate on multiple operands, we require separate instructions for each operation. SIMD allows a single instruction to perform the same operation on multiple values simultaneously by using larger registers(vector registers) designed for parallel execution.
+SIMD Extensions: NEON (ARM) and SSE (x86)
+Most modern CPUs include SIMD extensions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ARM (Apple M1, ARM64): Uses NEON instructions for vectorized computation.&lt;/li&gt;
+  &lt;li&gt;x86 (Intel, AMD): Uses the SSE (Streaming SIMD Extensions) and AVX (Advanced Vector Extensions) instruction sets:
+    &lt;ul&gt;
+      &lt;li&gt;SSE2, SSE3, SSE4: Earlier SIMD instruction sets for floating-point and integer operations.&lt;/li&gt;
+      &lt;li&gt;AVX, AVX2: Wider registers (256-bit) for more parallelism.&lt;/li&gt;
+      &lt;li&gt;AVX-512: Newer CPUs support 512-bit registers for even higher throughput.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;leveraging-simd-for-euclidean-distance-computation&quot;&gt;Leveraging SIMD for Euclidean Distance Computation&lt;/h2&gt;
+
+&lt;p&gt;By using SIMD, we can:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Load multiple floating-point values into a single register.&lt;/li&gt;
+  &lt;li&gt;Perform parallel operations on multiple data points in one instruction.&lt;/li&gt;
+  &lt;li&gt;Reduce loop iterations and instruction count, improving execution efficiency.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using optimized libraries like NumPy (which internally uses SIMD) or writing explicit vectorized code with compiler intrinsics can drastically improve performance.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ndarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+    Compute the Euclidean distance between two matrices using numpy.
+    Pure numpy implementation
+
+    Arguments:
+        Q -- A matrix of shape (M, D)
+        X -- A matrix of shape (N, D)
+    Returns: A matrix of shape (M, N) where each element (i, j) is the Euclidean distance between Q[i] and X[j]
+    &quot;&quot;&quot;&lt;/span&gt;   
+    &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;vector-intrinsics-in-c&quot;&gt;Vector intrinsics in C&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;:warning: &lt;strong&gt;When running on MACOS&lt;/strong&gt;: The SSE intrinsics are not available on macOS, so we need to use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sse2neon.h&lt;/code&gt; header file to emulate the SSE intrinsics using NEON intrinsics.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Below we can see the optimized C implementation using SIMD intrinsics:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Setting the sum vector to zero.&lt;/li&gt;
+  &lt;li&gt;Loading 4 elements at a time from Q and X.&lt;/li&gt;
+  &lt;li&gt;Subtracting the elements.&lt;/li&gt;
+  &lt;li&gt;Squaring the differences.&lt;/li&gt;
+  &lt;li&gt;Reducing the 4 floats to 1.&lt;/li&gt;
+  &lt;li&gt;Handling the remaining elements.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// SSE intrinsics&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// 4 for SSE, 8 for AVX&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#ifdef __x86_64__
+&lt;/span&gt;   &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;immintrin.h&amp;gt;
+#else  	
+&lt;/span&gt;  &lt;span class=&quot;cp&quot;&gt;#include &quot;sse2neon.h&quot;
+#endif
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// SIMD-optimized Euclidean distance function&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;euclidean_distance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Initialize SIMD sum register to 0&lt;/span&gt;
+
+            &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+	    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;block_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Process 4 elements at a time&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_vec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_loadu_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_vec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_loadu_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_sub_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;squared&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;squared&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// Horizontal sum of sum_vec (reduces 4 floats to 1)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_movehl_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum_vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_shuffle_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+            &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_cvtss_f32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Extract final sum&lt;/span&gt;
+
+            &lt;span class=&quot;c1&quot;&gt;// Handle remaining elements (if D is not a multiple of 4)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+
+	    &lt;span class=&quot;c1&quot;&gt;// Store result in distance matrix&lt;/span&gt;
+	    &lt;span class=&quot;n&quot;&gt;_mm_store_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distances&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_sqrt_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note the differences in the generated instructions for the inner loop:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000000000003f34	dup.2d	v1, v0[1]
+0000000000003f38	fadd.4s	v0, v0, v1
+0000000000003f3c	dup.4s	v1, v0[1]
+0000000000003f40	movi.2d	v2, #0000000000000000 // Set v2 to 0 -&amp;gt; _mm_setzero_ps()
+0000000000003f44	mov.s	v2[0], v1[0]
+0000000000003f48	fadd.4s	v0, v0, v2
+0000000000003f4c	add	x17, x14, x15
+0000000000003f50	fsqrt.4s	v0, v0 // Square root of the sum
+0000000000003f54	str	s0, [x2, x17, lsl #2]
+0000000000003f58	add	x14, x14, #0x1
+0000000000003f5c	add	x16, x16, x12
+0000000000003f60	cmp	x14, x13
+0000000000003f64	b.eq	0x3f0c
+0000000000003f68	movi.2d	v0, #0000000000000000
+0000000000003f6c	cmp	w5, #0x4
+0000000000003f70	b.lt	0x3f34 // Loop back
+0000000000003f74	mov	x17, #0x0
+0000000000003f78	mov	x3, x0
+0000000000003f7c	mov	x6, x16
+0000000000003f80	ldr	q1, [x3], #0x10 
+0000000000003f84	ldr	q2, [x6], #0x10
+0000000000003f88	fsub.4s	v1, v1, v2 // Subtract the elements -&amp;gt; _mm_sub_ps()
+0000000000003f8c	fmul.4s	v1, v1, v1 // Square the differences -&amp;gt; _mm_mul_ps()
+0000000000003f90	fadd.4s	v0, v0, v1 // Add the squared differences -&amp;gt; _mm_add_ps()
+0000000000003f94	add	x17, x17, #0x4
+0000000000003f98	cmp	x17, x9
+0000000000003f9c	b.le	0x3f80
+0000000000003fa0	b	0x3f34
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h1&gt;
+
+&lt;p&gt;Optimizing performance in Python requires an understanding of how the CPU processes instructions and accesses memory. While Python’s high-level nature makes it easy to use, it also introduces inefficiencies that can slow down execution. By applying techniques such as cache-friendly memory access, instruction-level parallelism, and SIMD vectorization, we can significantly improve performance.&lt;/p&gt;
+
+&lt;p&gt;In this post, we demonstrated how to optimize Euclidean distance calculations using:&lt;/p&gt;
+
+&lt;p&gt;Efficient memory access patterns to reduce cache misses.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Blocking techniques to improve cache locality.&lt;/li&gt;
+  &lt;li&gt;Loop unrolling to increase instruction-level parallelism.&lt;/li&gt;
+  &lt;li&gt;SIMD instructions to execute multiple operations in parallel.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For high-performance applications, leveraging tools like NumPy, Numba, and C extensions can further accelerate computations. By being mindful of CPU architecture and optimizing at the hardware level, we can push Python’s performance closer to that of lower-level languages like C.&lt;/p&gt;
+
+&lt;p&gt;With the right optimizations, Python can be an excellent choice for computationally intensive tasks while maintaining its readability and ease of use.&lt;/p&gt;</content><author><name></name></author><category term="python" /><category term="c" /><category term="arm" /><category term="x86" /><category term="simd" /><summary type="html">Introduction</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/performance-aware-programming-python.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/performance-aware-programming-python.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Distributed sorting with Elixir genservers</title><link href="https://andre-b-fernandes.github.io/distributed-sorting-elixir-genservers/" rel="alternate" type="text/html" title="Distributed sorting with Elixir genservers" /><published>2024-04-01T00:00:00+01:00</published><updated>2024-04-01T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/distributed-sorting-elixir</id><content type="html" xml:base="https://andre-b-fernandes.github.io/distributed-sorting-elixir-genservers/">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;In this post I am going to discuss how to implement a distributed sorting algorithm using Elixir genservers. The algorithm is based on the quicksort algorithm, which is a comparison sort algorithm that uses a divide-and-conquer strategy to sort an array. The algorithm is implemented in a distributed way, where each process is responsible for sorting a subset of the array. The processes communicate with each other to exchange information about the sorted subsets and to merge them into a final sorted array.&lt;/p&gt;
 
@@ -557,318 +1142,7 @@ wish to get some practice and basic leverage on the usage of spark for machine l
 applied on Big Data. It features a set of ML algorithms and different spark installations, one being on a remote databricks instance.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/img/posts/udemy-python-spark-big-data/certificate.jpg&quot; alt=&quot;Certificate&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="spark" /><category term="machine-learning" /><category term="big-data" /><category term="python" /><summary type="html">I’ve taken another Udemy course as part of my onboarding at Farfetch, which was Jose Portilla’s Python and Spark for Big Data course. Even though it only features Spark 2.0, it is a really good practical course if you wish to get some practice and basic leverage on the usage of spark for machine learning applied on Big Data. It features a set of ML algorithms and different spark installations, one being on a remote databricks instance.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/udemy-python-spark-big-data.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/udemy-python-spark-big-data.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">What really is vectorization and how does it work?</title><link href="https://andre-b-fernandes.github.io/what-is-vectorization/" rel="alternate" type="text/html" title="What really is vectorization and how does it work?" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/vectorization</id><content type="html" xml:base="https://andre-b-fernandes.github.io/what-is-vectorization/">&lt;p&gt;In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with 
-&lt;strong&gt;vectorization&lt;/strong&gt;. We hear a lot about it with the way typicall machine learning libraries work such as &lt;strong&gt;numpy&lt;/strong&gt; or &lt;strong&gt;pandas&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;But what really is vectorization and how does it work in practice?&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;SIMD&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;One of the ways to perform vectorization is when your program is compiled to vectorized CPU instructions. This type of &lt;em&gt;parallel processing&lt;/em&gt; is called &lt;strong&gt;Single Instruction Multiple Data&lt;/strong&gt; (SIMD) under &lt;strong&gt;Flynn’s Taxonomy&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;But what are vectorized CPU instructions?
-Modern CPU’s support multiple instruction sets extensions which implement SIMD.&lt;/p&gt;
-
-&lt;p&gt;Examples of these sets are &lt;strong&gt;MMX&lt;/strong&gt;, &lt;strong&gt;SSE&lt;/strong&gt;, &lt;strong&gt;AVX&lt;/strong&gt;, etc… and are available on modern Intel and AMD CPU’s. These instruction sets were developed and improved along the years of microprocessure architecture development.&lt;/p&gt;
-
-&lt;p&gt;For an historical reference, AVX was extended into AVX2 for the first time in 2013 when Intel launched the Haswell microprocessor 
-architecture.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Comparison between non-vectorization and vectorization behaviour&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;A normal machine cycle will include the &lt;strong&gt;Fetching Stage&lt;/strong&gt; where the CPU will fetch the instruction and data from the registers, it will then decode the instructions in the &lt;strong&gt;Decoder Stage&lt;/strong&gt; and emit the relevant signals to the ALU in the &lt;strong&gt;Execution Stage&lt;/strong&gt;.
-An &lt;strong&gt;ALU&lt;/strong&gt;(Arithmetical Logic Unit) is a digital circuit which is responsible for arithmetical operations on operands.&lt;/p&gt;
-
-&lt;p&gt;In the figure below the Decoder Stage is omitted.
-Normal registers have a fixed bit length dimension where data is stored, and if an operation takes two operands 
-an ALU will perform an operation on these 2 operands during the Execution Stage.&lt;/p&gt;
-
-&lt;p&gt;In a vectorized architecture, vectors are stored in &lt;strong&gt;Vector Registers&lt;/strong&gt; which behave similarly to &lt;strong&gt;Scalar Registers&lt;/strong&gt;
-and are divided into a fixed number of chunks supporting more than one variable.&lt;/p&gt;
-
-&lt;p&gt;E.g if we had a scalar register of 128 bits, a similar vector register could store 4 elements of 32 bits.&lt;/p&gt;
-
-&lt;p&gt;Loading data from a register will load multiple elements at a time, in one single machine cycle. Modern CPU’s support multiple ALU’s and so we can perform multiple independent operations in parallel.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/img/posts/vectorization/Vectorization.png&quot; alt=&quot;vectorization&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Hinting the compiler&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Now the question is how can we hint the compiler to compile our code with a vectorized instruction set.
-We will explore 2 options:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;strong&gt;Vector Intrisics&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I made a proof of concept &lt;a href=&quot;https://github.com/andre-b-fernandes/vectorization&quot;&gt;Github Repository&lt;/a&gt; which you can explore.&lt;/p&gt;
-
-&lt;p&gt;Lets take as an example the task of multiplying two square matrices.
-Each matrix is a floating pointer flat array and the matrix is stored in row-major.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matrixMultiplication&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The code above implements the standard matrix multiplication algorithm (without any improvements) whose
-time complexity is &lt;strong&gt;O(n&lt;sup&gt;3&lt;/sup&gt;)&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Vector Instrisics&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Vector intrisics feel like regular functions you call in normal C++ source code, but they are &lt;strong&gt;compiler intrisic functions&lt;/strong&gt; meaning that they are implented directly in the compilers.
-They are useful since they help hint the compiler to use vectorized instructions, since the compiler has 
-a intimate knowledge of the function and can integrate it and optimize it for better usage.&lt;/p&gt;
-
-&lt;p&gt;The vector intrisics you’ll see below either finish with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt;. That is because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; stands for &lt;strong&gt;scalar instructions&lt;/strong&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt; stands for &lt;strong&gt;packed instructions&lt;/strong&gt;.
-Packed operations operate on &lt;strong&gt;a vector in parallel&lt;/strong&gt; with a single instruction while scalar instructions
-operate only &lt;strong&gt;one element&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;Some of the operations below need to be performed on &lt;strong&gt;32 byte aligned memory addresses&lt;/strong&gt; (or 16 in case of 4 packed operations) which means that the memory address needs to be divisable by 32.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
-            &lt;span class=&quot;n&quot;&gt;_mm_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In the code above we used 6 intrisics:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_set_zero_ps&lt;/code&gt;: Create a vector of 4 zeros.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 4 times to the array.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_load_ps&lt;/code&gt;: Load 4 consequentive floating type numbers from a 16 byte aligned memory address.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m128&lt;/code&gt; types which is a packed vector type holding
-4 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
-            &lt;span class=&quot;n&quot;&gt;_mm256_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Similarly, in the code above we used 6 intrisics:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_setzero_ps&lt;/code&gt;: Create a vector of 8 zeros.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 8 times to the array.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_load_ps&lt;/code&gt;: Load 8 consequentive floating type numbers from a 32 byte aligned memory address.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m256&lt;/code&gt; types which is a packed vector type holding
-8 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
-
-&lt;p&gt;For more vector intrisics check &lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=4294,6118,6121,153,151,153,193,101,153,112,101,614&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Assembly code comparison&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;We can debug the assembly file result of the compilation process with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -S ...&lt;/code&gt; before assembling and linking it.&lt;/p&gt;
-
-&lt;p&gt;For a simple matrix multiplication let’s take a look at part of the assembly code generated by the compiler.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z20matrixMultiplicationPfS_S_:
-(...)
-.L8:
-	movl	-12(%rbp), %eax
-	imull	$1600, %eax, %edx
-	movl	-8(%rbp), %eax
-	addl	%edx, %eax
-	cltq
-	leaq	0(,%rax,4), %rdx
-	movq	-40(%rbp), %rax
-	addq	%rdx, %rax
-	movss	(%rax), %xmm1
-	movl	-12(%rbp), %eax
-	imull	$1600, %eax, %edx
-	movl	-4(%rbp), %eax
-	addl	%edx, %eax
-	cltq
-	leaq	0(,%rax,4), %rdx
-	movq	-24(%rbp), %rax
-	addq	%rdx, %rax
-	movss	(%rax), %xmm2
-	movl	-4(%rbp), %eax
-	imull	$1600, %eax, %edx
-	movl	-8(%rbp), %eax
-	addl	%edx, %eax
-	cltq
-	leaq	0(,%rax,4), %rdx
-	movq	-32(%rbp), %rax
-	addq	%rdx, %rax
-	movss	(%rax), %xmm0
-	mulss	%xmm2, %xmm0
-	movl	-12(%rbp), %eax
-	imull	$1600, %eax, %edx
-	movl	-8(%rbp), %eax
-	addl	%edx, %eax
-	cltq
-	leaq	0(,%rax,4), %rdx
-	movq	-40(%rbp), %rax
-	addq	%rdx, %rax
-	addss	%xmm1, %xmm0
-	movss	%xmm0, (%rax)
-	addl	$1, -4(%rbp)
-(...)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z31vectorizedMatrixMultiplication4PfS_S_:
-(...)
-.L19:
-	movl	-180(%rbp), %eax
-	imull	$1600, %eax, %eax
-	movslq	%eax, %rdx
-	movl	-172(%rbp), %eax
-	cltq
-	addq	%rdx, %rax
-	leaq	0(,%rax,4), %rdx
-	movq	-200(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -160(%rbp)
-	movq	-160(%rbp), %rax
-	vbroadcastss	(%rax), %xmm0
-	nop
-	vmovaps	%xmm0, -128(%rbp)
-	movl	-172(%rbp), %eax
-	imull	$1600, %eax, %eax
-	movslq	%eax, %rdx
-	movl	-176(%rbp), %eax
-	cltq
-	addq	%rdx, %rax
-	leaq	0(,%rax,4), %rdx
-	movq	-208(%rbp), %rax
-	addq	%rdx, %rax
-	movq	%rax, -168(%rbp)
-	movq	-168(%rbp), %rax
-	vmovaps	(%rax), %xmm0
-	vmovaps	%xmm0, -112(%rbp)
-	vmovaps	-128(%rbp), %xmm0
-	vmovaps	%xmm0, -48(%rbp)
-	vmovaps	-112(%rbp), %xmm0
-	vmovaps	%xmm0, -32(%rbp)
-	vmovaps	-48(%rbp), %xmm0
-	vmulps	-32(%rbp), %xmm0, %xmm0
-	vmovaps	%xmm0, -96(%rbp)
-	vmovaps	-144(%rbp), %xmm0
-	vmovaps	%xmm0, -80(%rbp)
-	vmovaps	-96(%rbp), %xmm0
-	vmovaps	%xmm0, -64(%rbp)
-	vmovaps	-80(%rbp), %xmm0
-	vaddps	-64(%rbp), %xmm0, %xmm0
-	vmovaps	%xmm0, -144(%rbp)
-	addl	$1, -172(%rbp)
-(...)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;These figures above show part of the instruction set used in the assembly result of our c++ code.
-You can notice the difference in the used instruction set from the traditional matrix factorization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z20matrixMultiplicationPfS_S_&lt;/code&gt;)
-to the vectorized one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z31vectorizedMatrixMultiplication4PfS_S_&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;Two very quick examples are the usage of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;imull&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;addl&lt;/code&gt;
-in contrast with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vmulps&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vaddps&lt;/code&gt; respectively.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Auto-Vectorization&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Auto-vectorization essentially means that we let the compiler optimize our calculation loops by itself, without hinting, which will work for traditional cases.&lt;/p&gt;
-
-&lt;p&gt;Take a loot at the following command: 
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -ftree-vectorize -mavx ...&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;We’re only aiming for vectorization, so we will omit level 3 optimization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-O3&lt;/code&gt;) and that’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ftree-vectorize&lt;/code&gt; compiler flag stands for.&lt;/p&gt;
-
-&lt;p&gt;We also need to target a valid SIMD instruction set extension so that
-it can be used by the compiler. That’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-mavx&lt;/code&gt; flag does.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Execution time comparison&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The results below were done for a squared matrix of 1600 by 1600.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Function&lt;/th&gt;
-      &lt;th&gt;Average Time&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Simple Matrix Factorization&lt;/td&gt;
-      &lt;td&gt;14933 ms&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Auto-Vectorization&lt;/td&gt;
-      &lt;td&gt;11962 ms&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Vectorized Matrix Multiplication (4)&lt;/td&gt;
-      &lt;td&gt;9817 ms&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Vectorized Matrix Multiplication (8)&lt;/td&gt;
-      &lt;td&gt;6143 ms&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.linuxjournal.com/content/introduction-gcc-compiler-intrinsics-vector-processing&quot;&gt;Linux journal introduction to intrisics&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.jsums.edu/robotics/files/2016/12/FECS17_Proceedings-FEC3555.pdf&quot;&gt;CPU vectorization  Jackson State University papper&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://stackoverflow.blog/2020/07/08/improving-performance-with-simd-intrinsics-in-three-use-cases/&quot;&gt;Stack Overflow blog post&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.cs.uic.edu/~ajayk/c566/VectorProcessors.pdf&quot;&gt;University of Illinois deck&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;</content><author><name></name></author><category term="cpp" /><category term="vectorization" /><summary type="html">In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vectorization.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vectorization.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Learning Python internals - Building a C Extension</title><link href="https://andre-b-fernandes.github.io/python-c-extension/" rel="alternate" type="text/html" title="Learning Python internals - Building a C Extension" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/python-c-extension</id><content type="html" xml:base="https://andre-b-fernandes.github.io/python-c-extension/">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/udemy-python-spark-big-data/certificate.jpg&quot; alt=&quot;Certificate&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="spark" /><category term="machine-learning" /><category term="big-data" /><category term="python" /><summary type="html">I’ve taken another Udemy course as part of my onboarding at Farfetch, which was Jose Portilla’s Python and Spark for Big Data course. Even though it only features Spark 2.0, it is a really good practical course if you wish to get some practice and basic leverage on the usage of spark for machine learning applied on Big Data. It features a set of ML algorithms and different spark installations, one being on a remote databricks instance.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/udemy-python-spark-big-data.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/udemy-python-spark-big-data.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Learning Python internals - Building a C Extension</title><link href="https://andre-b-fernandes.github.io/python-c-extension/" rel="alternate" type="text/html" title="Learning Python internals - Building a C Extension" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/python-c-extension</id><content type="html" xml:base="https://andre-b-fernandes.github.io/python-c-extension/">&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;In this post we’ll be reviewing Python internals by making a simple Python extension in C using the C python API.
 We’ll explore things like module definition, function creation, garbage collection (memory management) and error treatment.
@@ -1645,10 +1919,315 @@ We can then make use of &lt;code class=&quot;language-plaintext highlighter-roug
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/1_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/2_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
 &lt;img src=&quot;/assets/img/posts/vae-product-recommendations/3_neighbor.png&quot; alt=&quot;gru&quot; /&gt;
-&lt;img src=&quot;/assets/img/posts/vae-product-recommendations/4_neighbor.png&quot; alt=&quot;gru&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="recommendations" /><category term="machine-learning" /><category term="computer-vision" /><summary type="html">In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Online course about Machine Learning with Python</title><link href="https://andre-b-fernandes.github.io/udemy-ml-ds-dl-python/" rel="alternate" type="text/html" title="Online course about Machine Learning with Python" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/udemy-ml-dl-python</id><content type="html" xml:base="https://andre-b-fernandes.github.io/udemy-ml-ds-dl-python/">&lt;ul&gt;
-  &lt;li&gt;Recently, I finished an online course on &lt;strong&gt;Udemy&lt;/strong&gt; called &lt;a href=&quot;https://www.udemy.com/course/data-science-and-machine-learning-with-python-hands-on/&quot;&gt;Machine Learning, Data Science and Deep Learning with Python&lt;/a&gt;. It was my first course on Udemy, taught by &lt;strong&gt;Frank Kane&lt;/strong&gt;, founder of &lt;strong&gt;Sundog Education&lt;/strong&gt; and I thought it was a very nice hands-on and practical course on &lt;strong&gt;machine learning&lt;/strong&gt; using &lt;strong&gt;Python&lt;/strong&gt;.&lt;/li&gt;
-  &lt;li&gt;It attempts to &lt;strong&gt;cover as much ground&lt;/strong&gt; as possible, &lt;strong&gt;not going too deep&lt;/strong&gt; on each topic but the contents explained there were &lt;strong&gt;understandable&lt;/strong&gt; and it is a &lt;strong&gt;good way&lt;/strong&gt; to start and get an initial grasp of Machine Learning. I’ve previously worked with Machine Learning, so not all the concepts were new to me, but it was a very interesting experience nonetheless.&lt;/li&gt;
-  &lt;li&gt;The course’s final project was writing code to run some algorithms on a mammographic masses dataset for classification purposes, that is to detect breast cancer, which was a simple way of implementing some of the things I learned in the course. The code is hosted &lt;a href=&quot;https://github.com/Marko50/udemy-machine-learning-data-science-deep-learning-python&quot;&gt;here&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;img src=&quot;/assets/img/posts/vae-product-recommendations/4_neighbor.png&quot; alt=&quot;gru&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="recommendations" /><category term="machine-learning" /><category term="computer-vision" /><summary type="html">In this article, I’m going to write about Autoencoders and how they can be used to create recommender systems for content-based recommendations using product images.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vae-product-recommendations.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">What really is vectorization and how does it work?</title><link href="https://andre-b-fernandes.github.io/what-is-vectorization/" rel="alternate" type="text/html" title="What really is vectorization and how does it work?" /><published>2021-06-26T00:00:00+01:00</published><updated>2021-06-26T00:00:00+01:00</updated><id>https://andre-b-fernandes.github.io/vectorization</id><content type="html" xml:base="https://andre-b-fernandes.github.io/what-is-vectorization/">&lt;p&gt;In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with 
+&lt;strong&gt;vectorization&lt;/strong&gt;. We hear a lot about it with the way typicall machine learning libraries work such as &lt;strong&gt;numpy&lt;/strong&gt; or &lt;strong&gt;pandas&lt;/strong&gt;.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/img/posts/udemy-ml-ds-dl-python/certificate.png&quot; alt=&quot;Certificate&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="learning" /><category term="udemy" /><summary type="html">Recently, I finished an online course on Udemy called Machine Learning, Data Science and Deep Learning with Python. It was my first course on Udemy, taught by Frank Kane, founder of Sundog Education and I thought it was a very nice hands-on and practical course on machine learning using Python. It attempts to cover as much ground as possible, not going too deep on each topic but the contents explained there were understandable and it is a good way to start and get an initial grasp of Machine Learning. I’ve previously worked with Machine Learning, so not all the concepts were new to me, but it was a very interesting experience nonetheless. The course’s final project was writing code to run some algorithms on a mammographic masses dataset for classification purposes, that is to detect breast cancer, which was a simple way of implementing some of the things I learned in the course. The code is hosted here.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/udemy-ml-ds-dl-python.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/udemy-ml-ds-dl-python.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;But what really is vectorization and how does it work in practice?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SIMD&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;One of the ways to perform vectorization is when your program is compiled to vectorized CPU instructions. This type of &lt;em&gt;parallel processing&lt;/em&gt; is called &lt;strong&gt;Single Instruction Multiple Data&lt;/strong&gt; (SIMD) under &lt;strong&gt;Flynn’s Taxonomy&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;But what are vectorized CPU instructions?
+Modern CPU’s support multiple instruction sets extensions which implement SIMD.&lt;/p&gt;
+
+&lt;p&gt;Examples of these sets are &lt;strong&gt;MMX&lt;/strong&gt;, &lt;strong&gt;SSE&lt;/strong&gt;, &lt;strong&gt;AVX&lt;/strong&gt;, etc… and are available on modern Intel and AMD CPU’s. These instruction sets were developed and improved along the years of microprocessure architecture development.&lt;/p&gt;
+
+&lt;p&gt;For an historical reference, AVX was extended into AVX2 for the first time in 2013 when Intel launched the Haswell microprocessor 
+architecture.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Comparison between non-vectorization and vectorization behaviour&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A normal machine cycle will include the &lt;strong&gt;Fetching Stage&lt;/strong&gt; where the CPU will fetch the instruction and data from the registers, it will then decode the instructions in the &lt;strong&gt;Decoder Stage&lt;/strong&gt; and emit the relevant signals to the ALU in the &lt;strong&gt;Execution Stage&lt;/strong&gt;.
+An &lt;strong&gt;ALU&lt;/strong&gt;(Arithmetical Logic Unit) is a digital circuit which is responsible for arithmetical operations on operands.&lt;/p&gt;
+
+&lt;p&gt;In the figure below the Decoder Stage is omitted.
+Normal registers have a fixed bit length dimension where data is stored, and if an operation takes two operands 
+an ALU will perform an operation on these 2 operands during the Execution Stage.&lt;/p&gt;
+
+&lt;p&gt;In a vectorized architecture, vectors are stored in &lt;strong&gt;Vector Registers&lt;/strong&gt; which behave similarly to &lt;strong&gt;Scalar Registers&lt;/strong&gt;
+and are divided into a fixed number of chunks supporting more than one variable.&lt;/p&gt;
+
+&lt;p&gt;E.g if we had a scalar register of 128 bits, a similar vector register could store 4 elements of 32 bits.&lt;/p&gt;
+
+&lt;p&gt;Loading data from a register will load multiple elements at a time, in one single machine cycle. Modern CPU’s support multiple ALU’s and so we can perform multiple independent operations in parallel.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/posts/vectorization/Vectorization.png&quot; alt=&quot;vectorization&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Hinting the compiler&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now the question is how can we hint the compiler to compile our code with a vectorized instruction set.
+We will explore 2 options:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Vector Intrisics&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I made a proof of concept &lt;a href=&quot;https://github.com/andre-b-fernandes/vectorization&quot;&gt;Github Repository&lt;/a&gt; which you can explore.&lt;/p&gt;
+
+&lt;p&gt;Lets take as an example the task of multiplying two square matrices.
+Each matrix is a floating pointer flat array and the matrix is stored in row-major.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matrixMultiplication&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The code above implements the standard matrix multiplication algorithm (without any improvements) whose
+time complexity is &lt;strong&gt;O(n&lt;sup&gt;3&lt;/sup&gt;)&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Vector Instrisics&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Vector intrisics feel like regular functions you call in normal C++ source code, but they are &lt;strong&gt;compiler intrisic functions&lt;/strong&gt; meaning that they are implented directly in the compilers.
+They are useful since they help hint the compiler to use vectorized instructions, since the compiler has 
+a intimate knowledge of the function and can integrate it and optimize it for better usage.&lt;/p&gt;
+
+&lt;p&gt;The vector intrisics you’ll see below either finish with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt;. That is because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ss&lt;/code&gt; stands for &lt;strong&gt;scalar instructions&lt;/strong&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps&lt;/code&gt; stands for &lt;strong&gt;packed instructions&lt;/strong&gt;.
+Packed operations operate on &lt;strong&gt;a vector in parallel&lt;/strong&gt; with a single instruction while scalar instructions
+operate only &lt;strong&gt;one element&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Some of the operations below need to be performed on &lt;strong&gt;32 byte aligned memory addresses&lt;/strong&gt; (or 16 in case of 4 packed operations) which means that the memory address needs to be divisable by 32.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m128&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;_mm_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the code above we used 6 intrisics:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_set_zero_ps&lt;/code&gt;: Create a vector of 4 zeros.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 4 times to the array.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_load_ps&lt;/code&gt;: Load 4 consequentive floating type numbers from a 16 byte aligned memory address.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m128&lt;/code&gt; types which is a packed vector type holding
+4 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vectorizedMatrixMultiplication8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_setzero_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// fetches the element referenced by the pointer and broadcasts it into a vectorized scaled single precision.&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// Since its row X column, the each row element will have to be multiplied by each member of the column.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_broadcast_ss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;c1&quot;&gt;// row of the second matrix.&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_load_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;__m256&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_mul_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;second_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_mm256_add_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;multiplied_packed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;_mm256_store_ps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Similarly, in the code above we used 6 intrisics:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_setzero_ps&lt;/code&gt;: Create a vector of 8 zeros.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_broadcast_ss&lt;/code&gt;: Broadcast an element pointed by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;first + i * array_size l +&lt;/code&gt; 8 times to the array.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_load_ps&lt;/code&gt;: Load 8 consequentive floating type numbers from a 32 byte aligned memory address.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_mul_ps&lt;/code&gt;: Vectorized multiplication&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_add_ps&lt;/code&gt;: Vectorized addition&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_mm256_store_ps&lt;/code&gt;: Store the resulting calculation of 4 numbers in a memory address.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All these operations return or interact with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__m256&lt;/code&gt; types which is a packed vector type holding
+8 32-bit floating point values, which the compiler will store on vector registers.&lt;/p&gt;
+
+&lt;p&gt;For more vector intrisics check &lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=4294,6118,6121,153,151,153,193,101,153,112,101,614&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Auto Vectorization&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Assembly code comparison&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;We can debug the assembly file result of the compilation process with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -S ...&lt;/code&gt; before assembling and linking it.&lt;/p&gt;
+
+&lt;p&gt;For a simple matrix multiplication let’s take a look at part of the assembly code generated by the compiler.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z20matrixMultiplicationPfS_S_:
+(...)
+.L8:
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm1
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-4(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-24(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm2
+	movl	-4(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-32(%rbp), %rax
+	addq	%rdx, %rax
+	movss	(%rax), %xmm0
+	mulss	%xmm2, %xmm0
+	movl	-12(%rbp), %eax
+	imull	$1600, %eax, %edx
+	movl	-8(%rbp), %eax
+	addl	%edx, %eax
+	cltq
+	leaq	0(,%rax,4), %rdx
+	movq	-40(%rbp), %rax
+	addq	%rdx, %rax
+	addss	%xmm1, %xmm0
+	movss	%xmm0, (%rax)
+	addl	$1, -4(%rbp)
+(...)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;_Z31vectorizedMatrixMultiplication4PfS_S_:
+(...)
+.L19:
+	movl	-180(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-172(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-200(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -160(%rbp)
+	movq	-160(%rbp), %rax
+	vbroadcastss	(%rax), %xmm0
+	nop
+	vmovaps	%xmm0, -128(%rbp)
+	movl	-172(%rbp), %eax
+	imull	$1600, %eax, %eax
+	movslq	%eax, %rdx
+	movl	-176(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-208(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, -168(%rbp)
+	movq	-168(%rbp), %rax
+	vmovaps	(%rax), %xmm0
+	vmovaps	%xmm0, -112(%rbp)
+	vmovaps	-128(%rbp), %xmm0
+	vmovaps	%xmm0, -48(%rbp)
+	vmovaps	-112(%rbp), %xmm0
+	vmovaps	%xmm0, -32(%rbp)
+	vmovaps	-48(%rbp), %xmm0
+	vmulps	-32(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -96(%rbp)
+	vmovaps	-144(%rbp), %xmm0
+	vmovaps	%xmm0, -80(%rbp)
+	vmovaps	-96(%rbp), %xmm0
+	vmovaps	%xmm0, -64(%rbp)
+	vmovaps	-80(%rbp), %xmm0
+	vaddps	-64(%rbp), %xmm0, %xmm0
+	vmovaps	%xmm0, -144(%rbp)
+	addl	$1, -172(%rbp)
+(...)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These figures above show part of the instruction set used in the assembly result of our c++ code.
+You can notice the difference in the used instruction set from the traditional matrix factorization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z20matrixMultiplicationPfS_S_&lt;/code&gt;)
+to the vectorized one (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_Z31vectorizedMatrixMultiplication4PfS_S_&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Two very quick examples are the usage of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;imull&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;addl&lt;/code&gt;
+in contrast with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vmulps&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vaddps&lt;/code&gt; respectively.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Auto-Vectorization&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Auto-vectorization essentially means that we let the compiler optimize our calculation loops by itself, without hinting, which will work for traditional cases.&lt;/p&gt;
+
+&lt;p&gt;Take a loot at the following command: 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;g++ -ftree-vectorize -mavx ...&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We’re only aiming for vectorization, so we will omit level 3 optimization (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-O3&lt;/code&gt;) and that’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ftree-vectorize&lt;/code&gt; compiler flag stands for.&lt;/p&gt;
+
+&lt;p&gt;We also need to target a valid SIMD instruction set extension so that
+it can be used by the compiler. That’s what the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-mavx&lt;/code&gt; flag does.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Execution time comparison&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The results below were done for a squared matrix of 1600 by 1600.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Function&lt;/th&gt;
+      &lt;th&gt;Average Time&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Simple Matrix Factorization&lt;/td&gt;
+      &lt;td&gt;14933 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Auto-Vectorization&lt;/td&gt;
+      &lt;td&gt;11962 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vectorized Matrix Multiplication (4)&lt;/td&gt;
+      &lt;td&gt;9817 ms&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Vectorized Matrix Multiplication (8)&lt;/td&gt;
+      &lt;td&gt;6143 ms&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html&quot;&gt;Intel intrisic guide&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.linuxjournal.com/content/introduction-gcc-compiler-intrinsics-vector-processing&quot;&gt;Linux journal introduction to intrisics&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.jsums.edu/robotics/files/2016/12/FECS17_Proceedings-FEC3555.pdf&quot;&gt;CPU vectorization  Jackson State University papper&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://stackoverflow.blog/2020/07/08/improving-performance-with-simd-intrinsics-in-three-use-cases/&quot;&gt;Stack Overflow blog post&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.cs.uic.edu/~ajayk/c566/VectorProcessors.pdf&quot;&gt;University of Illinois deck&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;</content><author><name></name></author><category term="cpp" /><category term="vectorization" /><summary type="html">In machine learning, or in computer science/engineering literature we sometimes read about improving runtime performance with vectorization. We hear a lot about it with the way typicall machine learning libraries work such as numpy or pandas.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://andre-b-fernandes.github.io/vectorization.png" /><media:content medium="image" url="https://andre-b-fernandes.github.io/vectorization.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
