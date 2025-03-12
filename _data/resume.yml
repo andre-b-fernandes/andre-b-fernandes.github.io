@@ -8,6 +8,12 @@ personal-information:
   - label: Nationality
     value: Portuguese (C1 English level)
     icon: bi-house
+  - label: Education
+    value: MSc Computer Engineering at FEUP
+    icon: bi-laptop
+  - label: Erasmus
+    value: VSB - Technical University of Ostrava
+    icon: bi-cpu
   - label: Email
     value: fernandoandre49@gmail.com
     icon: bi-envelope-fill
@@ -31,7 +37,7 @@ academics:
 prof-exp:
   - label: Jumpseller
     value: Machine Learning Engineer
-    range: 2018-2021
+    range: 2018
     icon: bi-shop
     description: Created the recommendations Engine - NLP pipelines on AWS Sagemaker/Glue - Word embeddings with Word2Vec - Tensorflow. Online session-based GRU4REC with MlOps setup.
   - label: Farfetch
@@ -44,10 +50,14 @@ prof-exp:
     range: 2023
     icon: bi-bank
     description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees via lightgbm.
+  - label: Tripadvisor
+    value: Machine Learning Engineer
+    range: 2024
+    icon: bi-compass-fill
+    description: Langchain agent for creating a travel assistant bot - NLP pipelines with sentence embeddings
 tech-skills:
-  - Python (Flask/Gunicorn)
+  - Python
   - Data-science libraries Tensorflow, Numpy, Pandas, etc...
-  - Git
   - Docker + Kubernetes
   - Relational (PostgreSQL/MySQL) + Non Relational (MongoDB/DynamoDB) + Vector (Vespa.ai) DBs
 social-skills:

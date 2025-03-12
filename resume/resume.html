@@ -34,39 +34,14 @@ permalink: /resume/
   </div>
   <div class="col-12">
     <div class="row">
-      <div class="col-6">
-        {% for info in site.data.resume.academics %}
-          <div class="row">
-            <div class="col-lg-2">
-              <b> {{info.range }} </b>
-            </div>
-            <div class="col">
-              <p> {{info.label}}</p>
-              <p> {{info.value}} <i class="{{info.icon}}" role="img"></i></p>
-              <p> {{info.description}} </p>
-            </div>
-          </div>
-        {% endfor %}
-        {% for info in site.data.resume.extra-certifications %}
-          <div class="row">
-            <div class="col-lg-2">
-              <b> {{info.range }} </b>
-            </div>
-            <div class="col">
-              <p> {{info.label}}</p>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-
-      <div class="col-6">
+      <div class="col">
         {% for info in site.data.resume.prof-exp %}
           <div class="row">
             <div class="col-lg-2">
               <b> {{info.range }} </b>
             </div>
             <div class="col">
-              <p> {{info.label}} <i class="{{info.icon}}" role="img"></i> </p>
+	      <p> <strong>{{info.label}}</strong> <i class="{{info.icon}}" role="img"></i> </p>
               <p> {{info.value}}</p>
               <p> {{info.description}}</p>
             </div>
@@ -75,7 +50,7 @@ permalink: /resume/
       </div>
     </div>
   </div>
-  <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
+  <div class="col-12 mt-3 mb-3 border-top bg-secondary text-white">
     <h4 class="mt-2">
       Skills
     </h4>
