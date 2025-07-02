@@ -8,8 +8,11 @@ personal-information:
   - label: Nationality
     value: Portuguese (C1 English level)
     icon: bi-house
-  - label: Education
-    value: MSc Computer Engineering at FEUP
+  - label: University
+    value: University of Porto - Faculty of Engineering
+    icon: bi-book
+  - label: Degree
+    value: MSc Computer Engineering
     icon: bi-laptop
   - label: Erasmus
     value: VSB - Technical University of Ostrava
@@ -39,27 +42,28 @@ prof-exp:
     value: Machine Learning Engineer
     range: 2018
     icon: bi-shop
-    description: Created the recommendations Engine - NLP pipelines on AWS Sagemaker/Glue - Word embeddings with Word2Vec - Tensorflow. Online session-based GRU4REC with MlOps setup.
+    description: Recommendations for multiple e-commerce shops - NLP pipelines on AWS Sagemaker/Glue - Word embeddings with Word2Vec - Tensorflow. Online real-time session-based GRU4REC with MlOps setup.
   - label: Farfetch
     value: Machine Learning Engineer
     range: 2021
     icon: bi-bag-check-fill
-    description: Recommendations cluster - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, MLFlow and Kubernetes - Batch processing via Spark. Matrix factorization + serving dot product recommendations.
+    description: Recommendations in the fashion industry - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, MLFlow and Kubernetes - Batch processing via Spark. Matrix factorization + serving dot product recommendations.
   - label: Revolut
     value: Data Scientist
     range: 2023
     icon: bi-bank
-    description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees via lightgbm.
+    description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees via lightgbm - Classification scenario and data analysis and reporting with pandas.
   - label: Tripadvisor
-    value: Machine Learning Engineer
+    value: Senior Machine Learning Engineer
     range: 2024
     icon: bi-compass-fill
-    description: Langchain agent for creating a travel assistant bot - NLP pipelines with sentence embeddings
+    description: Langchain/Langraph agent for creating a travel assistant bot - NLP pipelines with sentence embeddings - LLM-as-judge evaluations - Entity matching from LLM free text.
 tech-skills:
   - Python
   - Data-science libraries Tensorflow, Numpy, Pandas, etc...
   - Docker + Kubernetes
-  - Relational (PostgreSQL/MySQL) + Non Relational (MongoDB/DynamoDB) + Vector (Vespa.ai) DBs
+  - Langraph/Langchain
+  - Relational (PostgreSQL/MySQL) + Non Relational (MongoDB/DynamoDB) + Vector (Vespa.ai, Qdrant) DBs
 social-skills:
   - Public Speaking
   - Helping others
