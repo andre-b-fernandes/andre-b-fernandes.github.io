@@ -147,9 +147,11 @@ body {
     font-size: 12pt;
   }
 
-  .container {
+  .container-fluid {
     max-width: 100% !important;
+    width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
 
   .bg-dark {
@@ -158,11 +160,11 @@ body {
   }
 
   .bg-secondary {
-    background: #555 !important;
+    background: #d3d3d3 !important;
   }
 
-  .text-white {
-    color: black !important;
+  .bg-secondary.text-white {
+    color: white !important;
   }
 
   .bg-dark .text-white,
@@ -179,7 +181,7 @@ body {
   }
 
   a {
-    color: black !important;
+    color: #0d6efd !important;
     text-decoration: underline;
   }
 }
