@@ -1,2 +1,6 @@
 cv.pdf
+resume.pdf
 .ruby-version
+node_modules/
+package.json
+package-lock.json

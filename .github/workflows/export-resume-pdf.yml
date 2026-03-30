@@ -1,0 +1,55 @@
+name: Export resume PDF
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "resume/**"
+      - "_layouts/resume.html"
+      - "_data/resume.yml"
+      - "assets/css/**"
+      - "scripts/export-resume-pdf.mjs"
+
+jobs:
+  export-pdf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright@^1.55.1
+          npx playwright install --with-deps chromium
+
+      - name: Serve built site
+        run: |
+          python3 -m http.server 4000 --directory _site &
+          sleep 3
+
+      - name: Export resume to PDF
+        run: node scripts/export-resume-pdf.mjs
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-pdf
+          path: resume.pdf
