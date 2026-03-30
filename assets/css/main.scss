@@ -139,3 +139,50 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+/* Print-friendly styles for resume PDF export */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 14pt;
+  }
+
+  .container-fluid {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .bg-dark {
+    background: white !important;
+    color: black !important;
+  }
+
+  .bg-secondary {
+    background: #d3d3d3 !important;
+  }
+
+  .bg-secondary.text-white {
+    color: white !important;
+  }
+
+  .bg-dark .text-white,
+  .page-heading {
+    color: black !important;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  p, li, .row {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: #0d6efd !important;
+    text-decoration: underline;
+  }
+}
+
