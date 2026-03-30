@@ -29,7 +29,7 @@ permalink: /resume/
   </div>
   <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
     <h4 class="mt-2">
-      Academics and Experience
+      Experience
     </h4>
   </div>
   <div class="col-12">
@@ -56,34 +56,12 @@ permalink: /resume/
   </div>
   <div class="col-12">
     <div class="row">
-      <div class="col-6">
-        <div class="row">
-          <div class="col-lg-2">
-            <b> Tech </b>
-          </div>
-          <div class="col">
-            <ul>
-              {% for info in site.data.resume.tech-skills %}
-              <li> {{ info }} </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="row">
-          <div class="col-2">
-            <b> Extra </b>
-          </div>
-          <div class="col">
-            <ul>
-              {% for info in site.data.resume.extra-curricular %}
-                <li> {{ info }} </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
+      <div class="col">
+        <ul>
+          {% for info in site.data.resume.tech-skills %}
+          <li> {{ info }} </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
   </div>

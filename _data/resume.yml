@@ -42,28 +42,28 @@ prof-exp:
     value: Machine Learning Engineer
     range: 2018
     icon: bi-shop
-    description: Recommendations for multiple e-commerce shops - NLP pipelines on AWS Sagemaker/Glue - Word embeddings with Word2Vec - Tensorflow. Online real-time session-based GRU4REC with MlOps setup.
+    description: Built recommendation systems for multiple e-commerce shops, including NLP pipelines on AWS SageMaker and Glue. Worked with Word2Vec word embeddings and TensorFlow for model development. Designed and deployed an online real-time session-based recommendation engine using GRU4REC with a full MLOps setup.
   - label: Farfetch
     value: Machine Learning Engineer
     range: 2021
     icon: bi-bag-check-fill
-    description: Recommendations in the fashion industry - ETL pipelines on Azure Databricks - Personalised fashion outfits via an LSTM Tensorflow model - Model serving with Gunicorn, Docker, MLFlow and Kubernetes - Batch processing via Spark. Matrix factorization + serving dot product recommendations.
+    description: Developed recommendation systems in the fashion industry, building ETL pipelines on Azure Databricks. Designed personalised fashion outfit recommendations using an LSTM TensorFlow model. Handled model serving with Gunicorn, Docker, MLFlow and Kubernetes, and batch processing via Spark. Implemented matrix factorisation and dot product similarity for scalable recommendation serving.
   - label: Revolut
     value: Data Scientist
     range: 2023
     icon: bi-bank
-    description: Fincrime department - CNP transactions fraud detection - Gradient Boosting regression trees via lightgbm - Classification scenario and data analysis and reporting with pandas.
+    description: Worked in the FinCrime department on card-not-present (CNP) transaction fraud detection. Built gradient boosting models using LightGBM in a binary classification scenario, and performed extensive data analysis and reporting with Pandas.
   - label: Tripadvisor
     value: Senior Machine Learning Engineer
     range: 2024
     icon: bi-compass-fill
-    description: Langchain/Langraph agent for creating a travel assistant bot - NLP pipelines with sentence embeddings - LLM-as-judge evaluations - Entity matching from LLM free text.
+    description: Implemented a LangGraph agent for a travel assistant via RAG, using Qdrant as a vector database and HuggingFace transformer models for embeddings. Worked with Redis as a feature store and developed entity matching pipelines to reconcile free-text LLM output with structured data. Conducted LLM-as-judge evaluations to measure assistant quality.
 tech-skills:
-  - Python
-  - Data-science libraries Tensorflow, Numpy, Pandas, etc...
-  - Docker + Kubernetes
-  - Langraph/Langchain
-  - Relational (PostgreSQL/MySQL) + Non Relational (MongoDB/DynamoDB) + Vector (Vespa.ai, Qdrant) DBs
+  - Python — primary programming language for data engineering, machine learning pipelines, and backend services.
+  - Data science libraries (TensorFlow, NumPy, Pandas, scikit-learn) for model development, training, and experimentation.
+  - Docker and Kubernetes for containerisation and orchestration of ML model serving infrastructure.
+  - LangGraph and LangChain for building agentic LLM-based applications and retrieval-augmented generation (RAG) pipelines.
+  - Relational (PostgreSQL, MySQL), NoSQL (MongoDB, DynamoDB), and Vector (Vespa.ai, Qdrant) databases for diverse storage needs.
 social-skills:
   - Public Speaking
   - Helping others
