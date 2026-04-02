@@ -5,64 +5,43 @@ subtitle: Machine Learning Engineer / Data Scientist
 permalink: /resume/
 ---
 
-<div class="bg-light border row">
-  <div class="col-12 mb-3 bg-secondary text-white">
-    <h4 class="mt-2">
-      Basic Information
-    </h4>
+<!-- Personal Information -->
+<h2 class="section-heading mb-4">Basic Information</h2>
+<div class="info-grid mb-5">
+  {% for info in site.data.resume.personal-information %}
+  <div class="info-item">
+    <i class="{{ info.icon }}" role="img"></i>
+    <div>
+      <div class="info-label">{{ info.label }}</div>
+      <div class="info-value">{{ info.value }}</div>
+    </div>
   </div>
-  <div class="col-12">
-    <div class="row">
-      {% for info in site.data.resume.personal-information %}
-        <div class="col-6">
-          <div class="row">
-            <div class="col-lg-3">
-              <b>{{info.label}}</b>
-            </div>
-            <div class="col">
-               {{info.value}} <i class="{{info.icon}}" role="img"></i>
-            </div>
-          </div>
+  {% endfor %}
+</div>
+
+<!-- Experience -->
+<h2 class="section-heading mb-4">Experience</h2>
+<div class="timeline mb-5">
+  {% for info in site.data.resume.prof-exp %}
+  <div class="timeline-item">
+    <div class="timeline-card">
+      <div class="d-flex align-items-start justify-content-between flex-wrap" style="gap: 0.5rem;">
+        <div>
+          <div class="timeline-title"><i class="{{ info.icon }}" role="img"></i> {{ info.label }}</div>
+          <div class="timeline-subtitle">{{ info.value }}</div>
         </div>
-      {% endfor %}
-    </div>
-  </div>
-  <div class="col-12 mt-5 mb-3 border-top bg-secondary text-white">
-    <h4 class="mt-2">
-      Experience
-    </h4>
-  </div>
-  <div class="col-12">
-    <div class="row">
-      <div class="col">
-        {% for info in site.data.resume.prof-exp %}
-          <div class="row">
-            <div class="col-lg-2">
-              <b> {{info.range }} </b>
-            </div>
-            <div class="col">
-	      <p> <strong>{{info.label}}</strong> <i class="{{info.icon}}" role="img"></i> - {{info.value}} </p>
-              <p> {{info.description}}</p>
-            </div>
-          </div>
-        {% endfor %}
+        <span class="timeline-badge">{{ info.range }}</span>
       </div>
+      <p class="timeline-description">{{ info.description }}</p>
     </div>
   </div>
-  <div class="col-12 mt-3 mb-3 border-top bg-secondary text-white">
-    <h4 class="mt-2">
-      Skills
-    </h4>
-  </div>
-  <div class="col-12">
-    <div class="row">
-      <div class="col">
-        <ul>
-          {% for info in site.data.resume.tech-skills %}
-          <li> {{ info }} </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
+</div>
+
+<!-- Skills -->
+<h2 class="section-heading mb-4">Skills</h2>
+<div class="mb-5" style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+  {% for info in site.data.resume.tech-skills %}
+  <span class="skill-badge">{{ info }}</span>
+  {% endfor %}
 </div>
