@@ -9,15 +9,15 @@
    CSS Custom Properties
    ============================================================ */
 :root {
-  --accent:          #4f46e5;
-  --accent-hover:    #4338ca;
-  --text-primary:    #111827;
-  --text-secondary:  #6b7280;
-  --bg-primary:      #ffffff;
-  --bg-secondary:    #f8f9fa;
-  --border-color:    #e5e7eb;
-  --card-shadow:     0 2px 12px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --accent:          #6366f1;
+  --accent-hover:    #818cf8;
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --bg-primary:      #0f1117;
+  --bg-secondary:    #1a1d27;
+  --border-color:    #2d3148;
+  --card-shadow:     0 2px 12px rgba(0, 0, 0, 0.4);
+  --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
   --radius:          12px;
   --transition:      all 0.2s ease;
 }
@@ -104,7 +104,7 @@ img {
 .site-navbar .navbar-toggler-icon {
   width: 1.25rem;
   height: 1.25rem;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(17, 24, 39, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(226, 232, 240, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* ============================================================
