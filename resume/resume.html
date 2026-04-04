@@ -40,8 +40,15 @@ permalink: /resume/
 
 <!-- Skills -->
 <h2 class="section-heading mb-4">Skills</h2>
-<div class="skill-list mb-5">
-  {% for info in site.data.resume.tech-skills %}
-  <div class="skill-item">{{ info }}</div>
+<div class="skill-groups mb-5">
+  {% for group in site.data.resume.tech-skills %}
+  <div class="skill-group">
+    <div class="skill-group-label">{{ group.category }}</div>
+    <div class="skill-tags">
+      {% for item in group.items %}
+      <span class="skill-tag">{{ item }}</span>
+      {% endfor %}
+    </div>
+  </div>
   {% endfor %}
 </div>
