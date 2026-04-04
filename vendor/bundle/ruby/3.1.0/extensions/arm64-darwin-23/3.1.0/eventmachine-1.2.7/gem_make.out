@@ -1,0 +1,16 @@
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/eventmachine-1.2.7/ext/fastfilereader
+/Users/fernandoandrefernandes/.rbenv/versions/3.1.2/bin/ruby -I /Users/fernandoandrefernandes/.rbenv/versions/3.1.2/lib/ruby/3.1.0 -r ./siteconf20260404-13614-j27s5t.rb extconf.rb
+creating Makefile
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/eventmachine-1.2.7/ext/fastfilereader
+make DESTDIR\= clean
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/eventmachine-1.2.7/ext/fastfilereader
+make DESTDIR\=
+compiling mapper.cpp
+compiling rubymain.cpp
+linking shared-object fastfilereaderext.bundle
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/eventmachine-1.2.7/ext/fastfilereader
+make DESTDIR\= install
+/opt/homebrew/bin/ginstall -c -m 0755 fastfilereaderext.bundle ./.gem.20260404-13614-d2b24

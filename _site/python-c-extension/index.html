@@ -68,7 +68,7 @@ handy for performance critical operations whenever they are executed millions of
 <p>Let’s start by creating a <code class="language-plaintext highlighter-rouge">matmul.c</code> file where we’ll define our matrix multiplication extension.
 The first thing to do is including the python header file which will include the Python C API and defining <code class="language-plaintext highlighter-rouge">PY_SSIZE_T_CLEAN</code> before including it.</p>
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define PY_SSIZE_T_CLEAN // For all # variants of formats (s#, y#, etc.), the macro PY_SSIZE_T_CLEAN must be defined before including Python.h. Using Py_SSIZT_T instead of int whenever we parse # arguments.
-#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp">
+#include &lt;Python.h&gt;
 </span></code></pre></div></div>
 
 <p>Below you can see the module initialization, where we define a custom error <code class="language-plaintext highlighter-rouge">InvalidMatSize</code>.

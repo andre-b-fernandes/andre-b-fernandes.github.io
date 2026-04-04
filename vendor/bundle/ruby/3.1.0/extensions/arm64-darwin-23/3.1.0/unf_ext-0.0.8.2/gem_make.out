@@ -1,0 +1,17 @@
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+/Users/fernandoandrefernandes/.rbenv/versions/3.1.2/bin/ruby -I /Users/fernandoandrefernandes/.rbenv/versions/3.1.2/lib/ruby/3.1.0 -r ./siteconf20260404-13614-io3ck1.rb extconf.rb
+checking for -lstdc++... yes
+creating Makefile
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make DESTDIR\= clean
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make DESTDIR\=
+compiling unf.cc
+linking shared-object unf_ext.bundle
+ld: warning: ignoring duplicate libraries: '-lc++'
+
+current directory: /Users/fernandoandrefernandes/Documents/Andre/repositories/andre-b-fernandes.github.io/vendor/bundle/ruby/3.1.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make DESTDIR\= install
+/opt/homebrew/bin/ginstall -c -m 0755 unf_ext.bundle ./.gem.20260404-13614-ror06b

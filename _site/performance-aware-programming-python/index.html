@@ -226,7 +226,7 @@ add eax, ebx ; Add eax with ebx; store in eax
 
 <p>A simple C implementation of Euclidean distance computation:</p>
 
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp">
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;math.h&gt;
 </span>
 <span class="c1">// Function to compute pairwise Euclidean distance</span>
 <span class="kt">void</span> <span class="nf">euclidean_distance</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">Q</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">X</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">distances</span><span class="p">,</span> <span class="kt">int</span> <span class="n">M</span><span class="p">,</span> <span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">D</span><span class="p">)</span> <span class="p">{</span>
@@ -338,7 +338,7 @@ add eax, ebx ; Add eax with ebx; store in eax
 
 <p>By unrolling the loop, we can increase the number of instructions executed per iteration, allowing the CPU to better utilize its execution pipelines.</p>
 
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;math.h&gt;</span><span class="cp">
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;math.h&gt;
 </span>
 <span class="cp">#define UNROLL_FACTOR 4
 </span>
@@ -573,9 +573,9 @@ Most modern CPUs include SIMD extensions:</p>
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// SSE intrinsics</span>
 <span class="c1">// 4 for SSE, 8 for AVX</span>
 <span class="cp">#ifdef __x86_64__
-</span>   <span class="cp">#include</span> <span class="cpf">&lt;immintrin.h&gt;</span><span class="cp">
+</span>   <span class="cp">#include &lt;immintrin.h&gt;
 #else  	
-</span>  <span class="cp">#include</span> <span class="cpf">"sse2neon.h"</span><span class="cp">
+</span>  <span class="cp">#include "sse2neon.h"
 #endif
 </span><span class="c1">// SIMD-optimized Euclidean distance function</span>
 <span class="kt">void</span> <span class="nf">euclidean_distance</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span> <span class="n">Q</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">X</span><span class="p">,</span> <span class="kt">float</span><span class="o">*</span> <span class="n">distances</span><span class="p">,</span> <span class="kt">int</span> <span class="n">M</span><span class="p">,</span> <span class="kt">int</span> <span class="n">N</span><span class="p">,</span> <span class="kt">int</span> <span class="n">D</span><span class="p">)</span> <span class="p">{</span>
