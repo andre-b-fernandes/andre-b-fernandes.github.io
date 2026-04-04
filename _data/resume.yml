@@ -59,11 +59,48 @@ prof-exp:
     icon: bi-compass-fill
     description: Implemented a LangGraph agent for a travel assistant via RAG, using Qdrant as a vector database and HuggingFace transformer models for embeddings. Worked with Redis as a feature store and developed entity matching pipelines to reconcile free-text LLM output with structured data. Conducted LLM-as-judge evaluations to measure assistant quality.
 tech-skills:
-  - Python — primary programming language for data engineering, machine learning pipelines, and backend services.
-  - Data science libraries (TensorFlow, NumPy, Pandas, scikit-learn) for model development, training, and experimentation.
-  - Docker and Kubernetes for containerisation and orchestration of ML model serving infrastructure.
-  - LangGraph and LangChain for building agentic LLM-based applications and retrieval-augmented generation (RAG) pipelines.
-  - Relational (PostgreSQL, MySQL), NoSQL (MongoDB, DynamoDB), and Vector (Vespa.ai, Qdrant) databases for diverse storage needs.
+  - category: Languages & Runtimes
+    items:
+      - Python
+      - C / C Extensions
+      - Elixir
+      - SQL
+      - Bash
+  - category: Machine Learning & AI
+    items:
+      - TensorFlow
+      - scikit-learn
+      - LightGBM
+      - NumPy
+      - Pandas
+      - NLP / Word2Vec
+      - GRU / LSTM / RNN
+      - Autoencoders / VAE
+      - Gradient Boosting Trees
+      - K-Means Clustering
+      - Recommender Systems
+      - LangChain / LangGraph
+      - RAG / LLM-as-Judge
+      - HuggingFace Transformers
+  - category: Data & Storage
+    items:
+      - PostgreSQL
+      - MySQL
+      - MongoDB
+      - DynamoDB
+      - Qdrant
+      - Vespa.ai
+      - Elasticsearch
+      - Redis
+  - category: MLOps & Infrastructure
+    items:
+      - Docker
+      - Kubernetes
+      - MLFlow
+      - Gunicorn
+      - Apache Spark / PySpark
+      - AWS SageMaker / Glue
+      - Azure Databricks
 social-skills:
   - Public Speaking
   - Helping others
