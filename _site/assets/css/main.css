@@ -2291,7 +2291,7 @@ a.text-dark:hover, a.text-dark:focus { color: #1d2124 !important; }
   .table td, .table th { background-color: #fff !important; }
   .table-bordered th, .table-bordered td { border: 1px solid #ddd !important; } }
 /* ============================================================ CSS Custom Properties ============================================================ */
-:root { --accent: #4f46e5; --accent-hover: #4338ca; --text-primary: #111827; --text-secondary: #6b7280; --bg-primary: #ffffff; --bg-secondary: #f8f9fa; --border-color: #e5e7eb; --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.14); --radius: 12px; --transition: all 0.2s ease; }
+:root { --accent: #38bdf8; --accent-hover: #7dd3fc; --text-primary: #e0f2fe; --text-secondary: #7ab8d4; --bg-primary: #0d1b2a; --bg-secondary: #1b2d40; --border-color: #1e3a52; --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.4); --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6); --radius: 12px; --transition: all 0.2s ease; }
 
 /* ============================================================ Base ============================================================ */
 html, body { height: 100%; }
@@ -2323,7 +2323,7 @@ img { max-width: 100%; height: auto; }
 
 .navbar-toggler:focus { box-shadow: none; }
 
-.site-navbar .navbar-toggler-icon { width: 1.25rem; height: 1.25rem; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(17, 24, 39, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
+.site-navbar .navbar-toggler-icon { width: 1.25rem; height: 1.25rem; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(224, 242, 254, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
 
 /* ============================================================ Main content area ============================================================ */
 .site-main { min-height: calc(100vh - 64px); }
