@@ -9,13 +9,13 @@
    CSS Custom Properties
    ============================================================ */
 :root {
-  --accent:          #6366f1;
-  --accent-hover:    #818cf8;
-  --text-primary:    #e2e8f0;
-  --text-secondary:  #94a3b8;
-  --bg-primary:      #0f1117;
-  --bg-secondary:    #1a1d27;
-  --border-color:    #2d3148;
+  --accent:          #38bdf8;
+  --accent-hover:    #7dd3fc;
+  --text-primary:    #e0f2fe;
+  --text-secondary:  #7ab8d4;
+  --bg-primary:      #0d1b2a;
+  --bg-secondary:    #1b2d40;
+  --border-color:    #1e3a52;
   --card-shadow:     0 2px 12px rgba(0, 0, 0, 0.4);
   --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
   --radius:          12px;
@@ -104,7 +104,7 @@ img {
 .site-navbar .navbar-toggler-icon {
   width: 1.25rem;
   height: 1.25rem;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(226, 232, 240, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(224, 242, 254, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* ============================================================
