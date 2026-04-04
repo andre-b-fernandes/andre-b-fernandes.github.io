@@ -1,53 +1,53 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FEUP, UPORTO, Portugal">
+    <title>About me</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
     <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
-    <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <script src="/assets/js/bootstrap/bootstrap.min.js"></script>
   </head>
   <body>
-    <main>
-	    <div class="row container-fluid">
-	  <div class="col-lg-2 justify-content-center align-middle border-dark border-left border-right navbar-bg">
-		<div class="card border-0 vscode-sidebar">
-  <h4 class="card-title text-center"> André Fernandes</h4>
-  <a href="/">
-    <img class="card-img-top mx-auto" src="/assets/img/profile-pic.jpeg" alt="">
-  </a>
-  <div class="card-body">
-    <p class="card-text font-weight-bold nav-indication"> Software Engineer - Data Scientist</p>
-    <p class="card-text nav-indication"> FEUP, UPORTO, Portugal</p>
-    <p class="card-text nav-link"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
-    <p class="card-text nav-link"><a href="httpsr//www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
-    
-      <p class="card-text "></p>
-        <a id="posts" class="navbar-link nav-link" href="/posts" role="tab">
-
-		 <i class="bi bi-file-earmark-code-fill"></i>
-		Posts 
-	</a>
-      </p>
-    
-      <p class="card-text "></p>
-        <a id="resume" class="navbar-link nav-link" href="/resume" role="tab">
-
-		 <i class="bi bi-file-earmark-code-fill"></i>
-		Resume 
-	</a>
-      </p>
-    
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">André Fernandes</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto align-items-center">
+        
+        <li class="nav-item">
+          <a class="nav-link" id="posts" href="/posts">Posts</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" id="resume" href="/resume">Resume</a>
+        </li>
+        <li class="nav-item ml-2">
+          <a class="nav-link nav-icon-link" href="https://github.com/andre-b-fernandes" aria-label="GitHub" target="_blank" rel="noopener">
+            <i class="bi-github" role="img"></i>
+          </a>
+        </li><li class="nav-item ml-1">
+          <a class="nav-link nav-icon-link" href="https://www.linkedin.com/in/af-fernandes" aria-label="LinkedIn" target="_blank" rel="noopener">
+            <i class="bi-linkedin" role="img"></i>
+          </a>
+        </li></ul>
+    </div>
   </div>
-</div>
+</nav>
 
-	  </div>
-	  <div class="col code-editor"><div class="row">
-		  <h1 class="page-heading mt-3 mb-4">About me</h1>
-		</div><div class="row" style="display: block;">
-		<ul>
+
+<main class="site-main">
+  <div class="container py-5"><div class="mb-4">
+      <h1 class="page-heading">About me</h1>
+    </div><ul>
   <li>
     <p>I’m a <strong>late 90’s guy (1997)</strong> who enjoys Portuguese hip/hop songs as well as rock and techno music. I’ve always loved technology, namely computers, and I’m a devoted member of a secret society called <strong>Linux Master Race</strong>. The freedom <strong>Linux</strong> gives me is beyond comparison and I really like experimenting with different distros.</p>
   </li>
@@ -74,22 +74,8 @@
   </li>
 </ul>
 
-		</div>
-		<div class="row">
-			<footer class="zsh-footer">
-			  <div class="zsh-prompt">
-			    <span class="user">andre_fernandes</span>@<span class="host">127.0.0.1</span>:<span class="directory">~</span>$ 
-			    <span  class="zsh-input" placeholder="">
-				echo "Page created at "
-			    </span>
-			  </div>
-			</footer>
-		</div>
-		</div>
-	  </div> 
-</div>
+  </div>
+</main>
 
-
-    </main>
   </body>
 </html>

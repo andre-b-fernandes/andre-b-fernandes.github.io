@@ -1,281 +1,322 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FEUP, UPORTO, Portugal">
+    <title>Posts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <script src="/assets/js/jquery/jquery-3.6.0.slim.min.js"></script>
     <script src="/assets/js/popperjs/popper-1.12.9.min.js"></script>
-    <script src="/assets/js/bootstrap/bootstrap.min.js" ></script>
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <script src="/assets/js/bootstrap/bootstrap.min.js"></script>
   </head>
   <body>
-    <main>
-	    <div class="row container-fluid">
-	  <div class="col-lg-2 justify-content-center align-middle border-dark border-left border-right navbar-bg">
-		<div class="card border-0 vscode-sidebar">
-  <h4 class="card-title text-center"> André Fernandes</h4>
-  <a href="/">
-    <img class="card-img-top mx-auto" src="/assets/img/profile-pic.jpeg" alt="">
-  </a>
-  <div class="card-body">
-    <p class="card-text font-weight-bold nav-indication"> Software Engineer - Data Scientist</p>
-    <p class="card-text nav-indication"> FEUP, UPORTO, Portugal</p>
-    <p class="card-text nav-link"><a href="https://github.com/andre-b-fernandes"> <i class="bi-github" role="img"></i> <span>andre-b-fernandes</span></a></p>
-    <p class="card-text nav-link"><a href="httpsr//www.linkedin.com/in/af-fernandes"> <i class="bi-linkedin" role="img"></i> <span class="username">af-fernandes</span></a></p>
-    
-      <p class="card-text "></p>
-        <a id="posts" class="navbar-link nav-link" href="/posts" role="tab">
-
-		 <i class="bi bi-file-earmark-code-fill"></i>
-		Posts 
-	</a>
-      </p>
-    
-      <p class="card-text "></p>
-        <a id="resume" class="navbar-link nav-link" href="/resume" role="tab">
-
-		 <i class="bi bi-file-earmark-code-fill"></i>
-		Resume 
-	</a>
-      </p>
-    
+    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">André Fernandes</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto align-items-center">
+        
+        <li class="nav-item">
+          <a class="nav-link" id="posts" href="/posts">Posts</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" id="resume" href="/resume">Resume</a>
+        </li>
+        <li class="nav-item ml-2">
+          <a class="nav-link nav-icon-link" href="https://github.com/andre-b-fernandes" aria-label="GitHub" target="_blank" rel="noopener">
+            <i class="bi-github" role="img"></i>
+          </a>
+        </li><li class="nav-item ml-1">
+          <a class="nav-link nav-icon-link" href="https://www.linkedin.com/in/af-fernandes" aria-label="LinkedIn" target="_blank" rel="noopener">
+            <i class="bi-linkedin" role="img"></i>
+          </a>
+        </li></ul>
+    </div>
   </div>
+</nav>
+
+
+<main class="site-main">
+  <div class="container py-5"><div class="mb-4">
+      <h1 class="page-heading">Posts</h1>
+    </div><div class="row">
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/performance-aware-programming-python.png" alt="Performance-Aware Programming &amp; Python: Optimizing Euclidean Distance Calculation">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/performance-aware-programming-python/" target="_blank">
+            Performance-Aware Programming &amp; Python: Optimizing Euclidean Distance Calculation
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#python</span>
+            
+              <span class="cat-badge">#c</span>
+            
+              <span class="cat-badge">#arm</span>
+            
+              <span class="cat-badge">#x86</span>
+            
+              <span class="cat-badge">#simd</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/distributed-sorting-elixir-genservers.png" alt="Distributed sorting with Elixir genservers">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/distributed-sorting-elixir-genservers/" target="_blank">
+            Distributed sorting with Elixir genservers
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#elixir</span>
+            
+              <span class="cat-badge">#algorithm</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/hierarchical-classification.png" alt="Hierarchical Classification with K-Means and a Neural Network">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/hierarchical-classification/" target="_blank">
+            Hierarchical Classification with K-Means and a Neural Network
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#machine-learning</span>
+            
+              <span class="cat-badge">#classification</span>
+            
+              <span class="cat-badge">#ann</span>
+            
+              <span class="cat-badge">#k-means</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/udemy-python-spark-big-data.png" alt="Udemy Python and Spark for Big Data">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/udemy-python-spark-big-data/" target="_blank">
+            Udemy Python and Spark for Big Data
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#spark</span>
+            
+              <span class="cat-badge">#machine-learning</span>
+            
+              <span class="cat-badge">#big-data</span>
+            
+              <span class="cat-badge">#python</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/gradient-boosting-trees.png" alt="Gradient boosting trees">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/gradient-boosting-trees/" target="_blank">
+            Gradient boosting trees
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#python</span>
+            
+              <span class="cat-badge">#gradientboosting</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/python-extension.png" alt="Learning Python internals - Building a C Extension">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/python-c-extension/" target="_blank">
+            Learning Python internals - Building a C Extension
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#c</span>
+            
+              <span class="cat-badge">#python</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/vectorization.png" alt="What really is vectorization and how does it work?">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/what-is-vectorization/" target="_blank">
+            What really is vectorization and how does it work?
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#cpp</span>
+            
+              <span class="cat-badge">#vectorization</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/vae-product-recommendations.png" alt="Autoencoders for product recommendations">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/autoencoders-product-recommendations/" target="_blank">
+            Autoencoders for product recommendations
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#recommendations</span>
+            
+              <span class="cat-badge">#machine-learning</span>
+            
+              <span class="cat-badge">#computer-vision</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/gru4rec.png" alt="Gated Recurrent Units - GRU4REC recommender system">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/gru4rec/" target="_blank">
+            Gated Recurrent Units - GRU4REC recommender system
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#recommendations</span>
+            
+              <span class="cat-badge">#machine-learning</span>
+            
+              <span class="cat-badge">#session-based</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/word2vec.png" alt="Word2Vec and Elasticsearch for Recommendations">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/w2vec-cb-recommendations/" target="_blank">
+            Word2Vec and Elasticsearch for Recommendations
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#recommendations</span>
+            
+              <span class="cat-badge">#machine-learning</span>
+            
+              <span class="cat-badge">#content-based</span>
+            
+              <span class="cat-badge">#NLP</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        
+        
+        <img class="post-card-img" src="/assets/img/posts/udemy-ml-ds-dl-python.png" alt="Online course about Machine Learning with Python">
+        
+        
+        <div class="post-card-body">
+          <a class="post-card-title" href="/udemy-ml-ds-dl-python/" target="_blank">
+            Online course about Machine Learning with Python
+          </a>
+          <div class="post-card-cats">
+            
+              <span class="cat-badge">#learning</span>
+            
+              <span class="cat-badge">#udemy</span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  
 </div>
 
-	  </div>
-	  <div class="col code-editor"><div class="row">
-		  <h1 class="page-heading mt-3 mb-4">Posts</h1>
-		</div><div class="row" style="display: block;">
-		<div class="row">
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/performance-aware-programming-python/" target="_blank">
-          Performance-Aware Programming & Python: Optimizing Euclidean Distance Calculation
-        </a>
+  </div>
+</main>
 
-        <img class="mt-1 card-img-top" src="/assets/img/posts/performance-aware-programming-python.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #python </small>
-          
-            <small class="text-muted"> #c </small>
-          
-            <small class="text-muted"> #arm </small>
-          
-            <small class="text-muted"> #x86 </small>
-          
-            <small class="text-muted"> #simd </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/distributed-sorting-elixir-genservers/" target="_blank">
-          Distributed sorting with Elixir genservers
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/distributed-sorting-elixir-genservers.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #elixir </small>
-          
-            <small class="text-muted"> #algorithm </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/hierarchical-classification/" target="_blank">
-          Hierarchical Classification with K-Means and a Neural Network
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/hierarchical-classification.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #machine-learning </small>
-          
-            <small class="text-muted"> #classification </small>
-          
-            <small class="text-muted"> #ann </small>
-          
-            <small class="text-muted"> #k-means </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/udemy-python-spark-big-data/" target="_blank">
-          Udemy Python and Spark for Big Data
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/udemy-python-spark-big-data.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #spark </small>
-          
-            <small class="text-muted"> #machine-learning </small>
-          
-            <small class="text-muted"> #big-data </small>
-          
-            <small class="text-muted"> #python </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/gradient-boosting-trees/" target="_blank">
-          Gradient boosting trees
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/gradient-boosting-trees.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #python </small>
-          
-            <small class="text-muted"> #gradientboosting </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/python-c-extension/" target="_blank">
-          Learning Python internals - Building a C Extension
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/python-extension.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #c </small>
-          
-            <small class="text-muted"> #python </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/what-is-vectorization/" target="_blank">
-          What really is vectorization and how does it work?
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/vectorization.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #cpp </small>
-          
-            <small class="text-muted"> #vectorization </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/autoencoders-product-recommendations/" target="_blank">
-          Autoencoders for product recommendations
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/vae-product-recommendations.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #recommendations </small>
-          
-            <small class="text-muted"> #machine-learning </small>
-          
-            <small class="text-muted"> #computer-vision </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/gru4rec/" target="_blank">
-          Gated Recurrent Units - GRU4REC recommender system
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/gru4rec.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #recommendations </small>
-          
-            <small class="text-muted"> #machine-learning </small>
-          
-            <small class="text-muted"> #session-based </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/w2vec-cb-recommendations/" target="_blank">
-          Word2Vec and Elasticsearch for Recommendations
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/word2vec.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #recommendations </small>
-          
-            <small class="text-muted"> #machine-learning </small>
-          
-            <small class="text-muted"> #content-based </small>
-          
-            <small class="text-muted"> #NLP </small>
-          
-        </p>
-      </div>
-    </div>
-  
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="/udemy-ml-ds-dl-python/" target="_blank">
-          Online course about Machine Learning with Python
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/udemy-ml-ds-dl-python.png">
-        <p class="ml-1 card-text">
-          
-            <small class="text-muted"> #learning </small>
-          
-            <small class="text-muted"> #udemy </small>
-          
-        </p>
-      </div>
-    </div>
-  
-</div>
-
-		</div>
-		<div class="row">
-			<footer class="zsh-footer">
-			  <div class="zsh-prompt">
-			    <span class="user">andre_fernandes</span>@<span class="host">127.0.0.1</span>:<span class="directory">~</span>$ 
-			    <span  class="zsh-input" placeholder="">
-				echo "Page created at 21 June 2021"
-			    </span>
-			  </div>
-			</footer>
-		</div>
-		</div>
-	  </div> 
-</div>
-
-
-    </main>
   </body>
 </html>

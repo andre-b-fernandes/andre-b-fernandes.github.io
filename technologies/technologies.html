@@ -4,30 +4,72 @@ title: Technologies
 permalink: /technologies/
 ---
 
-<div class="row">
-  {% for logo in site.data.technologies.programming %}
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <img src="/{{ logo.path }}" class="tech-image img-fluid" alt="{{ logo.label }}">
+<div class="mb-5">
+  <p class="tech-category-title">Programming</p>
+  <div class="row">
+    {% for logo in site.data.technologies.programming %}
+    <div class="col-6 col-md-3 col-lg-2 mb-3">
+      <div class="tech-card">
+        <img src="/{{ logo.path }}" alt="{{ logo.label }}">
+        <span class="tech-label">{{ logo.label }}</span>
+      </div>
     </div>
-  {% endfor %}
-  {% for logo in site.data.technologies.cloud %}
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <img src="/{{ logo.path }}" class="tech-image img-fluid" alt="{{ logo.label }}">
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mb-5">
+  <p class="tech-category-title">Cloud</p>
+  <div class="row">
+    {% for logo in site.data.technologies.cloud %}
+    <div class="col-6 col-md-3 col-lg-2 mb-3">
+      <div class="tech-card">
+        <img src="/{{ logo.path }}" alt="{{ logo.label }}">
+        <span class="tech-label">{{ logo.label }}</span>
+      </div>
     </div>
-  {% endfor %}
-  {% for logo in site.data.technologies.databases %}
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <img src="/{{ logo.path }}" class="tech-image img-fluid" alt="{{ logo.label }}">
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mb-5">
+  <p class="tech-category-title">Databases</p>
+  <div class="row">
+    {% for logo in site.data.technologies.databases %}
+    <div class="col-6 col-md-3 col-lg-2 mb-3">
+      <div class="tech-card">
+        <img src="/{{ logo.path }}" alt="{{ logo.label }}">
+        <span class="tech-label">{{ logo.label }}</span>
+      </div>
     </div>
-  {% endfor %}
-  {% for logo in site.data.technologies.libraries %}
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <img src="/{{ logo.path }}" class="tech-image img-fluid" alt="{{ logo.label }}">
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mb-5">
+  <p class="tech-category-title">Libraries</p>
+  <div class="row">
+    {% for logo in site.data.technologies.libraries %}
+    <div class="col-6 col-md-3 col-lg-2 mb-3">
+      <div class="tech-card">
+        <img src="/{{ logo.path }}" alt="{{ logo.label }}">
+        <span class="tech-label">{{ logo.label }}</span>
+      </div>
     </div>
-  {% endfor %}
-  {% for logo in site.data.technologies.version-control %}
-    <div class="col-md-3 d-flex align-items-center justify-content-center">
-      <img src="/{{ logo.path }}" class="tech-image img-fluid" alt="{{ logo.label }}">
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mb-5">
+  <p class="tech-category-title">Version Control</p>
+  <div class="row">
+    {% for logo in site.data.technologies.version-control %}
+    <div class="col-6 col-md-3 col-lg-2 mb-3">
+      <div class="tech-card">
+        <img src="/{{ logo.path }}" alt="{{ logo.label }}">
+        <span class="tech-label">{{ logo.label }}</span>
+      </div>
     </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>

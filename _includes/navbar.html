@@ -1,25 +1,31 @@
-<div class="card border-0 vscode-sidebar">
-  <h4 class="card-title text-center"> {{ site.data.navbar.title }}</h4>
-  <a href="/">
-    <img class="card-img-top mx-auto" src="/{{ site.profile_path }}" alt="">
-  </a>
-  <div class="card-body">
-    <p class="card-text font-weight-bold nav-indication"> {{ site.data.navbar.subtitle }}</p>
-    <p class="card-text nav-indication"> {{ site.data.navbar.description }}</p>
-    <p class="card-text nav-link">
-      {%- if site.github_username -%}<a href="https://github.com/{{ site.github_username| cgi_escape | escape }}"> <i class="bi-github" role="img"></i> <span>{{ site.github_username| escape }}</span></a>{%- endif -%}
-    </p>
-    <p class="card-text nav-link">
-      {%- if site.linkedin_username -%}<a href="httpsr//www.linkedin.com/in/{{ site.linkedin_username| cgi_escape | escape }}"> <i class="bi-linkedin" role="img"></i> <span class="username">{{ site.linkedin_username| escape }}</span></a>{%- endif -%}
-    </p>
-    {% for content in site.data.navbar.contents %}
-      <p class="card-text "></p>
-        <a id="{{ content.id }}" class="navbar-link nav-link" href="{{ content.href }}" role="tab">
-
-		 <i class="bi bi-file-earmark-code-fill"></i>
-		{{ content.title }} 
-	</a>
-      </p>
-    {% endfor %}
+<nav class="navbar navbar-expand-lg site-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">{{ site.data.navbar.title }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto align-items-center">
+        {% for content in site.data.navbar.contents %}
+        <li class="nav-item">
+          <a class="nav-link" id="{{ content.id }}" href="{{ content.href }}">{{ content.title }}</a>
+        </li>
+        {% endfor %}
+        {%- if site.github_username -%}
+        <li class="nav-item ml-2">
+          <a class="nav-link nav-icon-link" href="https://github.com/{{ site.github_username | cgi_escape | escape }}" aria-label="GitHub" target="_blank" rel="noopener">
+            <i class="bi-github" role="img"></i>
+          </a>
+        </li>
+        {%- endif -%}
+        {%- if site.linkedin_username -%}
+        <li class="nav-item ml-1">
+          <a class="nav-link nav-icon-link" href="https://www.linkedin.com/in/{{ site.linkedin_username | cgi_escape | escape }}" aria-label="LinkedIn" target="_blank" rel="noopener">
+            <i class="bi-linkedin" role="img"></i>
+          </a>
+        </li>
+        {%- endif -%}
+      </ul>
+    </div>
   </div>
-</div>
+</nav>

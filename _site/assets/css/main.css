@@ -5,6 +5,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 @import url(bootstrap-icons/bootstrap-icons.css);
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 :root { --blue: #007bff; --indigo: #6610f2; --purple: #6f42c1; --pink: #e83e8c; --red: #dc3545; --orange: #fd7e14; --yellow: #ffc107; --green: #28a745; --teal: #20c997; --cyan: #17a2b8; --white: #fff; --gray: #6c757d; --gray-dark: #343a40; --primary: #007bff; --secondary: #6c757d; --success: #28a745; --info: #17a2b8; --warning: #ffc107; --danger: #dc3545; --light: #f8f9fa; --dark: #343a40; --breakpoint-xs: 0; --breakpoint-sm: 576px; --breakpoint-md: 768px; --breakpoint-lg: 992px; --breakpoint-xl: 1200px; --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -2289,52 +2290,155 @@ a.text-dark:hover, a.text-dark:focus { color: #1d2124 !important; }
   .table { border-collapse: collapse !important; }
   .table td, .table th { background-color: #fff !important; }
   .table-bordered th, .table-bordered td { border: 1px solid #ddd !important; } }
-/* Basic reset for the footer */
-.zsh-footer { background-color: #1e1e1e; /* Dark background similar to a terminal */ color: #d4d4d4; /* Light gray text color */ font-family: 'Courier New', Courier, monospace; /* Monospaced font */ padding: 10px 20px; border-top: 2px solid #3c3c3c; /* A subtle border to separate the footer */ display: flex; align-items: center; width: 100%; }
+/* ============================================================ CSS Custom Properties ============================================================ */
+:root { --accent: #38bdf8; --accent-hover: #7dd3fc; --text-primary: #e0f2fe; --text-secondary: #7ab8d4; --bg-primary: #0d1b2a; --bg-secondary: #1b2d40; --border-color: #1e3a52; --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.4); --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6); --radius: 12px; --transition: all 0.2s ease; }
 
-/* Styling the prompt text */
-.zsh-prompt { display: flex; align-items: center; flex-wrap: wrap; }
+/* ============================================================ Base ============================================================ */
+html, body { height: 100%; }
 
-.zsh-prompt .user { color: #569cd6; /* Blue color for the username */ }
+body { font-family: 'Inter', sans-serif; font-size: 16px; color: var(--text-primary); background-color: var(--bg-primary); line-height: 1.7; }
 
-.zsh-prompt .host { color: #dcdcaa; /* Yellowish color for the hostname */ }
+h1, h2, h3, h4, h5, h6 { font-weight: 600; color: var(--text-primary); }
 
-.zsh-prompt .directory { color: #4ec9b0; /* Greenish color for the directory */ }
+a { color: var(--accent); transition: var(--transition); }
 
-/* Input styling to mimic terminal input */
-.zsh-input { background: transparent; border: none; color: #d4d4d4; font-family: inherit; font-size: 1em; outline: none; margin-left: 5px; flex: 1; /* Allow the input to fill remaining space */ }
+a:hover { color: var(--accent-hover); text-decoration: none; }
 
-.zsh-input::placeholder { color: #6a6a6a; /* Darker gray for the placeholder */ }
+img { max-width: 100%; height: auto; }
 
-/* Code Editor Styling */
-.code-editor { background-color: #2b2b2b; /* Dark background, similar to VS Code */ color: #f8f8f2; /* Light text color */ font-family: 'Courier New', Courier, monospace; /* Monospaced font */ padding: 20px; border-radius: 5px; overflow: auto; height: 100%; /* Set height to 80% of the viewport */ }
+/* ============================================================ Navbar ============================================================ */
+.site-navbar { background-color: var(--bg-primary); border-bottom: 1px solid var(--border-color); padding: 0.75rem 0; z-index: 1030; }
 
-.code-editor img { max-width: 70%; max-height: 70%; }
+.site-navbar .navbar-brand { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: -0.01em; }
 
-.vscode-sidebar .nav-indication, .vscode-sidebar .nav-link { color: #d4d4d4; /* Text color */ padding: 10px 20px; /* Padding around items */ display: flex; align-items: center; /* Center icons and text vertically */ text-decoration: none; /* Remove underline */ font-size: 16px; }
+.site-navbar .navbar-brand:hover { color: var(--accent-hover); }
 
-.vscode-sidebar .nav-link { /* Reuse the styles from .nav-indication */ transition: color 0.3s, background-color 0.3s; /* Smooth transition */ }
+.site-navbar .nav-link { color: var(--text-primary); font-weight: 500; font-size: 0.95rem; padding: 0.4rem 0.75rem; border-radius: 6px; transition: var(--transition); }
 
-.vscode-sidebar { background-color: #0d003f; /* Dark background color */ color: #d4d4d4; /* Light text color */ height: 100vh; /* Full height of the viewport */ width: 100%; /* Full width of the sidebar column */ padding-top: 20px; /* Space at the top */ }
+.site-navbar .nav-link:hover { color: var(--accent); background-color: rgba(79, 70, 229, 0.06); }
 
-.vscode-sidebar .nav-link:hover { background-color: #333333; /* Lighter background on hover */ color: #1e90ff; /* Brighter blue text on hover */ }
+.site-navbar .nav-icon-link { font-size: 1.1rem; padding: 0.4rem 0.5rem; }
 
-pre.highlight { background-color: #6a8fc4; /* Light blue background for contrast */ color: #333; /* Darker text color */ font-family: 'Courier New', Courier, monospace; /* Monospace font for code */ padding: 10px; /* Padding for readability */ border-radius: 5px; /* Rounded corners */ overflow-x: auto; /* Horizontal scroll for long lines */ line-height: 1.5; /* Spacing between lines */ }
+.navbar-toggler { border: 1px solid var(--border-color); padding: 0.35rem 0.5rem; }
 
-.container-fluid { height: 100%; }
+.navbar-toggler:focus { box-shadow: none; }
 
-.navbar-bg { background-color: #0d003f; }
+.site-navbar .navbar-toggler-icon { width: 1.25rem; height: 1.25rem; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(224, 242, 254, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
 
-.card { color: darkgrey; padding-top: 20px; }
+/* ============================================================ Main content area ============================================================ */
+.site-main { min-height: calc(100vh - 64px); }
 
-.card-img-top { width: 50%; transform: translateX(50%); border-radius: 50%; }
+.page-heading { font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem; }
 
-.navbar-link:visited { color: white; }
+.page-subheading { font-size: 1.1rem; font-weight: 400; }
 
-.content-bg { background-color: white; }
+/* ============================================================ Hero section (homepage) ============================================================ */
+.hero-section { padding: 4rem 0 3rem; }
 
-html, body, main { height: 100%; }
+.hero-avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); box-shadow: var(--card-shadow); }
 
-main div.card { height: 100%; }
+.hero-name { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; }
 
-body { font-size: 18px; background-color: #292525; font-family: 'Montserrat', sans-serif; }
+.hero-role { font-size: 1.15rem; color: var(--accent); font-weight: 500; }
+
+.hero-description { font-size: 1rem; color: var(--text-secondary); max-width: 600px; }
+
+.hero-cta .btn-accent { background-color: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-weight: 500; transition: var(--transition); }
+
+.hero-cta .btn-accent:hover { background-color: var(--accent-hover); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+/* ============================================================ Cards ============================================================ */
+.content-card { background: var(--bg-primary); border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--border-color); padding: 1.5rem; transition: var(--transition); }
+
+.content-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
+
+/* Post cards */
+.post-card { background: var(--bg-primary); border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--border-color); overflow: hidden; transition: var(--transition); height: 100%; display: flex; flex-direction: column; }
+
+.post-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-3px); }
+
+.post-card .post-card-img { width: 100%; height: 160px; object-fit: cover; }
+
+.post-card .post-card-body { padding: 1rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
+
+.post-card .post-card-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; margin-bottom: 0.5rem; }
+
+.post-card .post-card-title:hover { color: var(--accent); }
+
+.post-card .post-card-cats { margin-top: auto; padding-top: 0.5rem; }
+
+/* ============================================================ Section headers with accent border ============================================================ */
+.section-heading { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); padding-left: 0.75rem; border-left: 4px solid var(--accent); margin-bottom: 1.5rem; }
+
+/* ============================================================ Timeline (experience / resume) ============================================================ */
+.timeline { position: relative; padding-left: 2rem; }
+
+.timeline::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+
+.timeline-item { position: relative; margin-bottom: 2rem; }
+
+.timeline-item::before { content: ''; position: absolute; left: -1.625rem; top: 0.4rem; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg-primary); box-shadow: 0 0 0 2px var(--accent); }
+
+.timeline-card { background: var(--bg-primary); border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); padding: 1.25rem 1.5rem; transition: var(--transition); }
+
+.timeline-card:hover { box-shadow: var(--card-shadow-hover); }
+
+.timeline-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem; }
+
+.timeline-subtitle { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+
+.timeline-badge { display: inline-block; background: rgba(79, 70, 229, 0.1); color: var(--accent); font-size: 0.78rem; font-weight: 600; padding: 0.2rem 0.65rem; border-radius: 20px; margin-bottom: 0.75rem; }
+
+.timeline-description { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; }
+
+/* ============================================================ Skills ============================================================ */
+.skill-groups { display: grid; gap: 1.25rem; }
+
+.skill-group { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+
+.skill-group-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); white-space: nowrap; min-width: 180px; }
+
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.skill-tag { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 999px; padding: 0.3rem 0.85rem; font-size: 0.82rem; line-height: 1.5; transition: var(--transition); }
+.skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ============================================================ Personal info grid (resume) ============================================================ */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+
+.info-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); }
+
+.info-item i { font-size: 1.1rem; color: var(--accent); margin-top: 0.15rem; flex-shrink: 0; }
+
+.info-item .info-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
+
+.info-item .info-value { font-size: 0.9rem; color: var(--text-primary); }
+
+/* ============================================================ Technologies grid ============================================================ */
+.tech-category-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border-color); }
+
+.tech-card { background: var(--bg-primary); border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); padding: 1.25rem 0.75rem; text-align: center; transition: var(--transition); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+.tech-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-3px); }
+
+.tech-card img { width: 52px; height: 52px; object-fit: contain; margin-bottom: 0.65rem; }
+
+.tech-card .tech-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+
+/* ============================================================ Code blocks ============================================================ */
+pre.highlight { background-color: #f6f8fa; color: #24292e; font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 0.875rem; padding: 1rem 1.25rem; border-radius: 8px; overflow-x: auto; line-height: 1.6; border: 1px solid var(--border-color); }
+
+/* ============================================================ Category badge (posts) ============================================================ */
+.cat-badge { display: inline-block; background: rgba(79, 70, 229, 0.1); color: var(--accent); font-size: 0.75rem; font-weight: 500; padding: 0.15rem 0.55rem; border-radius: 12px; margin-right: 0.25rem; }
+
+/* ============================================================ Responsive helpers ============================================================ */
+@media (max-width: 576px) { .hero-name { font-size: 1.9rem; }
+  .page-heading { font-size: 1.6rem; } }
+/* ============================================================ Print styles (resume PDF export) ============================================================ */
+@media print { body { background: white !important; color: black !important; font-size: 12pt; }
+  .site-navbar { display: none !important; }
+  .container { max-width: 100% !important; padding: 0 !important; }
+  h1, h2, h3, h4 { page-break-after: avoid; }
+  p, li, .timeline-item { page-break-inside: avoid; }
+  a { color: #4f46e5 !important; text-decoration: underline; }
+  .timeline-card, .content-card, .info-item { box-shadow: none !important; border: 1px solid #e5e7eb !important; } }

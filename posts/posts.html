@@ -5,21 +5,27 @@ permalink: /posts/
 date: 2021-06-21
 ---
 
-
 <div class="row">
   {% for post in site.posts %}
-    <div class="col-sm-4 mt-3">
-      <div class="card">
-        <a href="{{ post.url }}" target="_blank">
-          {{ post.title }}
-        </a>
-
-        <img class="mt-1 card-img-top" src="/assets/img/posts/{{ post.image }}">
-        <p class="ml-1 card-text">
-          {% for cat in post.categories %}
-            <small class="text-muted"> #{{ cat }} </small>
-          {% endfor %}
-        </p>
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="post-card">
+        {% if post.image %}
+        {% if post.image contains '/' %}
+        <img class="post-card-img" src="{{ post.image }}" alt="{{ post.title | escape }}">
+        {% else %}
+        <img class="post-card-img" src="/assets/img/posts/{{ post.image }}" alt="{{ post.title | escape }}">
+        {% endif %}
+        {% endif %}
+        <div class="post-card-body">
+          <a class="post-card-title" href="{{ post.url }}" target="_blank">
+            {{ post.title | escape }}
+          </a>
+          <div class="post-card-cats">
+            {% for cat in post.categories %}
+              <span class="cat-badge">#{{ cat }}</span>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
   {% endfor %}
