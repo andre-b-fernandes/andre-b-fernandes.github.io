@@ -96,9 +96,15 @@ img {
 
 .navbar-toggler {
   border: 1px solid var(--border-color);
+  padding: 0.35rem 0.5rem;
 }
 .navbar-toggler:focus {
   box-shadow: none;
+}
+.site-navbar .navbar-toggler-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(17, 24, 39, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* ============================================================
@@ -311,24 +317,20 @@ img {
 }
 
 /* ============================================================
-   Skills / Badges
+   Skills
    ============================================================ */
-.skill-badge {
-  display: inline-block;
+.skill-list {
+  display: grid;
+  gap: 0.75rem;
+}
+.skill-item {
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 0.3rem 0.85rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin: 0.25rem;
-  transition: var(--transition);
-}
-.skill-badge:hover {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 /* ============================================================
