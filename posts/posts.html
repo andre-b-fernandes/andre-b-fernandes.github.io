@@ -10,7 +10,11 @@ date: 2021-06-21
     <div class="col-sm-6 col-lg-4 mb-4">
       <div class="post-card">
         {% if post.image %}
+        {% if post.image contains '/' %}
         <img class="post-card-img" src="{{ post.image }}" alt="{{ post.title | escape }}">
+        {% else %}
+        <img class="post-card-img" src="/assets/img/posts/{{ post.image }}" alt="{{ post.title | escape }}">
+        {% endif %}
         {% endif %}
         <div class="post-card-body">
           <a class="post-card-title" href="{{ post.url }}" target="_blank">
