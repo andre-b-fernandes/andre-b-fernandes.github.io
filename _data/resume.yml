@@ -45,8 +45,9 @@ prof-exp:
     icon: bi-shop
     description: Initially joined as a part-time working student while completing my university degree, contributing to back-end engineering projects with Ruby on Rails, including payment system integrations. Later hired full-time as a Machine Learning Engineer. Built recommendation systems for e-commerce shops, including NLP pipelines on AWS SageMaker and Glue. Developed Word2Vec word embeddings and integrated them into Elasticsearch to enable vector-based semantic search, while also improving the platform's traditional search capabilities. Designed a real-time session-based recommendation engine using GRU4REC with a full MLOps setup.
   - label: Farfetch
-    value: Machine Learning Engineer → Senior
+    value: Machine Learning Engineer
     range: 2021
+    value_detail: Mid → Senior
     icon: bi-bag-check-fill
     description: Joined as a Machine Learning Engineer and was promoted to Senior Machine Learning Engineer. Developed recommendation systems in the fashion industry, building ETL pipelines on Azure Databricks. Designed personalised fashion outfit recommendations using an LSTM TensorFlow model. Handled model serving with Gunicorn, Docker, MLFlow and Kubernetes, and batch processing via Spark. Implemented matrix factorisation and dot product similarity for scalable recommendation serving.
   - label: Revolut

@@ -557,7 +557,7 @@ pre.highlight {
   margin-bottom: 0.1rem;
 }
 .resume-role {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--cv-text-secondary);
   font-weight: 400;
   margin-bottom: 0.5rem;
@@ -565,7 +565,7 @@ pre.highlight {
 
 /* CV section headings */
 .cv-section-heading {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--cv-text);
   text-transform: uppercase;
@@ -573,7 +573,7 @@ pre.highlight {
   padding-left: 0.6rem;
   border-left: 3px solid var(--cv-accent);
   margin-bottom: 0.6rem;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 /* CV info grid – compact */
@@ -598,7 +598,7 @@ pre.highlight {
   flex-shrink: 0;
 }
 .cv-info-item .cv-info-label {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -656,17 +656,17 @@ pre.highlight {
   padding: 0.5rem 0.75rem;
 }
 .cv-timeline-title {
-  font-size: 0.95rem;
+  font-size: 1.0rem;
   font-weight: 700;
   color: var(--cv-text);
   margin-bottom: 0;
 }
 .cv-timeline-title i {
   color: var(--cv-accent);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 .cv-timeline-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.90rem;
   color: var(--cv-text-secondary);
   margin-bottom: 0.2rem;
 }
@@ -674,7 +674,7 @@ pre.highlight {
   display: inline-block;
   background: var(--cv-bg-accent);
   color: var(--cv-accent);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 600;
   padding: 0.05rem 0.4rem;
   border-radius: 3px;
@@ -691,7 +691,7 @@ pre.highlight {
   border-radius: 10px;
 }
 .cv-timeline-description {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: #4b5563;
   margin-bottom: 0;
   line-height: 1.5;
