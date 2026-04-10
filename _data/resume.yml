@@ -40,24 +40,25 @@ academics:
 prof-exp:
   - label: Jumpseller
     value: Machine Learning Engineer
+    value_detail: Part-time (Student) → Full-time
     range: 2018
     icon: bi-shop
-    description: Built recommendation systems for multiple e-commerce shops, including NLP pipelines on AWS SageMaker and Glue. Worked with Word2Vec word embeddings and TensorFlow for model development. Designed and deployed an online real-time session-based recommendation engine using GRU4REC with a full MLOps setup.
+    description: Initially joined as a part-time working student while completing my university degree, contributing to back-end engineering projects with Ruby on Rails, including payment system integrations. Later hired full-time as a Machine Learning Engineer. Built recommendation systems for e-commerce shops, including NLP pipelines on AWS SageMaker and Glue. Developed Word2Vec word embeddings and integrated them into Elasticsearch to enable vector-based semantic search, while also improving the platform's traditional search capabilities. Designed a real-time session-based recommendation engine using GRU4REC with a full MLOps setup.
   - label: Farfetch
-    value: Machine Learning Engineer
+    value: Machine Learning Engineer → Senior
     range: 2021
     icon: bi-bag-check-fill
-    description: Developed recommendation systems in the fashion industry, building ETL pipelines on Azure Databricks. Designed personalised fashion outfit recommendations using an LSTM TensorFlow model. Handled model serving with Gunicorn, Docker, MLFlow and Kubernetes, and batch processing via Spark. Implemented matrix factorisation and dot product similarity for scalable recommendation serving.
+    description: Joined as a Machine Learning Engineer and was promoted to Senior Machine Learning Engineer. Developed recommendation systems in the fashion industry, building ETL pipelines on Azure Databricks. Designed personalised fashion outfit recommendations using an LSTM TensorFlow model. Handled model serving with Gunicorn, Docker, MLFlow and Kubernetes, and batch processing via Spark. Implemented matrix factorisation and dot product similarity for scalable recommendation serving.
   - label: Revolut
     value: Data Scientist
     range: 2023
     icon: bi-bank
-    description: Worked in the FinCrime department on card-not-present (CNP) transaction fraud detection. Built gradient boosting models using LightGBM in a binary classification scenario, and performed extensive data analysis and reporting with Pandas.
+    description: Worked in the FinCrime department on card-not-present (CNP) transaction fraud detection, personally owning a KPI to minimize CNP fraud transaction rates. Developed gradient boosting classification models using LightGBM to decline or flag suspicious transactions, directly impacting downstream review teams. Focused on minimizing alert false positives while maintaining sufficient recall to meet personal fraud reduction targets. Performed extensive data analysis and reporting with Pandas.
   - label: Tripadvisor
     value: Senior Machine Learning Engineer
     range: 2024
     icon: bi-compass-fill
-    description: Implemented a LangGraph agent for a travel assistant via RAG, using Qdrant as a vector database and HuggingFace transformer models for embeddings. Worked with Redis as a feature store and developed entity matching pipelines to reconcile free-text LLM output with structured data. Conducted LLM-as-judge evaluations to measure assistant quality.
+    description: Focused on developing LangGraph agents and agentic workflows with diverse tool integrations, exploring multiple agent architectures. Implemented a RAG-based travel assistant using Qdrant as a vector database and HuggingFace transformer models for embeddings. Built a conversation starters and follow-ups project and developed a dashboard to track OpenAI costs, token usage, and latency via OpenTelemetry tracing of agent actions. Worked with Redis as a feature store and developed entity matching pipelines. Conducted LLM-as-judge evaluations to measure assistant quality.
 tech-skills:
   - category: Languages & Runtimes
     items:
