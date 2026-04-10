@@ -3,50 +3,56 @@ layout: resume
 title: André Fernandes
 subtitle: Machine Learning Engineer / Data Scientist
 permalink: /resume/
+body_class: resume-page
 ---
 
 <!-- Personal Information -->
-<h2 class="section-heading mb-4">Basic Information</h2>
-<div class="info-grid mb-5">
+<h2 class="cv-section-heading">Basic Information</h2>
+<div class="cv-info-grid">
   {% for info in site.data.resume.personal-information %}
-  <div class="info-item">
+  <div class="cv-info-item">
     <i class="{{ info.icon }}" role="img"></i>
     <div>
-      <div class="info-label">{{ info.label }}</div>
-      <div class="info-value">{{ info.value }}</div>
+      <div class="cv-info-label">{{ info.label }}</div>
+      <div class="cv-info-value">{{ info.value }}</div>
     </div>
   </div>
   {% endfor %}
 </div>
 
 <!-- Experience -->
-<h2 class="section-heading mb-4">Experience</h2>
-<div class="timeline mb-5">
+<h2 class="cv-section-heading">Experience</h2>
+<div class="cv-timeline">
   {% for info in site.data.resume.prof-exp %}
-  <div class="timeline-item">
-    <div class="timeline-card">
-      <div class="d-flex align-items-start justify-content-between flex-wrap" style="gap: 0.5rem;">
+  <div class="cv-timeline-item">
+    <div class="cv-timeline-card">
+      <div class="d-flex align-items-start justify-content-between flex-wrap" style="gap: 0.25rem;">
         <div>
-          <div class="timeline-title"><i class="{{ info.icon }}" role="img"></i> {{ info.label }}</div>
-          <div class="timeline-subtitle">{{ info.value }}</div>
+          <div class="cv-timeline-title"><i class="{{ info.icon }}" role="img"></i> {{ info.label }}</div>
+          <div class="cv-timeline-subtitle">
+            {{ info.value }}
+            {% if info.value_detail %}
+              <span class="cv-role-detail">{{ info.value_detail }}</span>
+            {% endif %}
+          </div>
         </div>
-        <span class="timeline-badge">{{ info.range }}</span>
+        <span class="cv-timeline-badge">{{ info.range }}</span>
       </div>
-      <p class="timeline-description">{{ info.description }}</p>
+      <p class="cv-timeline-description">{{ info.description }}</p>
     </div>
   </div>
   {% endfor %}
 </div>
 
 <!-- Skills -->
-<h2 class="section-heading mb-4">Skills</h2>
-<div class="skill-groups mb-5">
+<h2 class="cv-section-heading">Skills</h2>
+<div class="cv-skill-groups">
   {% for group in site.data.resume.tech-skills %}
-  <div class="skill-group">
-    <div class="skill-group-label">{{ group.category }}</div>
-    <div class="skill-tags">
+  <div class="cv-skill-group">
+    <div class="cv-skill-group-label">{{ group.category }}</div>
+    <div class="cv-skill-tags">
       {% for item in group.items %}
-      <span class="skill-tag">{{ item }}</span>
+      <span class="cv-skill-tag">{{ item }}</span>
       {% endfor %}
     </div>
   </div>
