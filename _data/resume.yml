@@ -64,7 +64,7 @@ prof-exp:
     value: Senior Machine Learning Engineer
     value_detail: Conversational XP
     range: 2026
-    icon: bi-building-fill
+    icon: bi-house-fill
     description: Joined Grupo QuintoAndar, a leading Latin American real estate proptech company focused on simplifying the renting and purchasing of homes. Working in the Conversational XP team, building AI agents and chatbots powered by generative AI using Google ADK (Agent Development Kit), aiming to improve the conversational experience for users across the platform.
 tech-skills:
   - category: Languages & Runtimes
