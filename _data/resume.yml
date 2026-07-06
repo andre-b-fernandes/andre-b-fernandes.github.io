@@ -57,9 +57,15 @@ prof-exp:
     description: Worked in the FinCrime department on card-not-present (CNP) transaction fraud detection, personally owning a KPI to minimize CNP fraud transaction rates. Developed gradient boosting classification models using LightGBM to decline or flag suspicious transactions, directly impacting downstream review teams. Focused on minimizing alert false positives while maintaining sufficient recall to meet personal fraud reduction targets. Performed extensive data analysis and reporting with Pandas.
   - label: Tripadvisor
     value: Senior Machine Learning Engineer
-    range: 2024
+    range: 2024 - 2026
     icon: bi-compass-fill
     description: Focused on developing LangGraph agents and agentic workflows with diverse tool integrations, exploring multiple agent architectures. Implemented a RAG-based travel assistant using Qdrant as a vector database and HuggingFace transformer models for embeddings. Built a conversation starters and follow-ups project and developed a dashboard to track OpenAI costs, token usage, and latency via OpenTelemetry tracing of agent actions. Worked with Redis as a feature store and developed entity matching pipelines. Conducted LLM-as-judge evaluations to measure assistant quality.
+  - label: Grupo QuintoAndar
+    value: Senior Machine Learning Engineer
+    value_detail: Conversational XP
+    range: 2026
+    icon: bi-building-fill
+    description: Joined Grupo QuintoAndar, a leading Latin American real estate proptech company focused on simplifying the renting and purchasing of homes. Working in the Conversational XP team, building AI agents and chatbots powered by generative AI using Google ADK (Agent Development Kit), aiming to improve the conversational experience for users across the platform.
 tech-skills:
   - category: Languages & Runtimes
     items:
